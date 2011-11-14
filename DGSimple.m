@@ -24,7 +24,7 @@ leftEdgeOfVisualField = -visualFieldSize/2;
 rightEdgeOfVisualField = visualFieldSize/2;
 
 % Open file
-fileID = fopen(filename);
+fileID = fopen(filename,'w');
 
 % Make header
 numberOfSimultanousObjects = 1;
