@@ -1,3 +1,10 @@
+%
+%  DGSimple.m
+%  VisBack
+%
+%  Created by Bedeho Mender on 15/11/11.
+%  Copyright 2011 OFTNAI. All rights reserved.
+%
 
 function DGSimple(filename)
 
@@ -34,7 +41,7 @@ state = 0;                                          % 0 = fixating, 1 = saccadin
 stateTimer = 0;                                     % the duration of the present state
 eyePosition = leftEdgeOfVisualField;                % Center on 0, start on left edge (e.g. -100 deg)
 
-fwrite(fileID, samplingRate, 'float');              % Rate of sampling
+fwrite(fileID, samplingRate, 'uint');               % Rate of sampling
 fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets, needed to parse data
 
 % Output data sequence for each target
@@ -42,8 +49,10 @@ targets = leftEdgeOfVisualField:visualFieldSize/nrOfVisualTargetLocations:rightE
 
 for t = targets,
     doTimeSteps();
+    fwrite(fileID, NaN('single'), 'float'); % transform flag
 end
 
+% Close file
 fclose(fileID);
 
 function doTimeSteps()
@@ -87,9 +96,8 @@ function doTimeSteps()
         else
             return;
         end
-        
-        fwrite(fileID, NaN('single'), 'float');
     end
+    
 end
 
 end
