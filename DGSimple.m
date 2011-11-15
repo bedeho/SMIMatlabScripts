@@ -34,25 +34,19 @@ state = 0;                                          % 0 = fixating, 1 = saccadin
 stateTimer = 0;                                     % the duration of the present state
 eyePosition = leftEdgeOfVisualField;                % Center on 0, start on left edge (e.g. -100 deg)
 
-samplesPerVisualTarget = doTimeSteps(false);        % dry run to get sample count
-
 fwrite(fileID, samplingRate, 'float');              % Rate of sampling
-fwrite(fileID, nrOfVisualTargetLocations, 'uint');  % Number of "objects"
-fwrite(fileID, samplesPerVisualTarget, 'uint');     % Number of "transforms"
-fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets
+fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets, needed to parse data
 
 % Output data sequence for each target
 targets = leftEdgeOfVisualField:visualFieldSize/nrOfVisualTargetLocations:rightEdgeOfVisualField;
 
 for t = targets,
-    doTimeSteps(true);
+    doTimeSteps();
 end
 
 fclose(fileID);
 
-function [nrOfDataPoints] = doTimeSteps(output)
-    
-    nrOfDataPoints = 0;
+function doTimeSteps()
     
     % Do timesteps, 
     % inner loop terminates when eyes have saccaded past right edge of visual field
@@ -88,17 +82,13 @@ function [nrOfDataPoints] = doTimeSteps(output)
         
         % Output data point if we are still within visual field
         if eyePosition < rightEdgeOfVisualField,
-            
-            if output,
-                fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
-                fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
-            end
-            
-            nrOfDataPoints = nrOfDataPoints + 1;
+            fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
+            fwrite(fileID, t + eyePosition, 'float'); % Fixation offset of target
         else
             return;
         end
         
+        fwrite(fileID, NaN('single'), 'float');
     end
 end
 

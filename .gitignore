@@ -1,3 +1,10 @@
-# Ignore temporary files
-._*
+# Ignore MATLAB autosave files
+*.as
+*.asv
+# ignore temp files
+.*
+# ignore matlab tmp files
 *~
+
+# Data file
+declareGlobalVars.m
