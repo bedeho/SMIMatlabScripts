@@ -14,10 +14,10 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     
     % LIP Parameters
     visualFieldSize = 200; % (deg)
-    visualPreferenceDistance = 1;
-    eyePositionPrefrerenceDistance = 1;
+    visualPreferenceDistance = 2;
+    eyePositionPrefrerenceDistance = 2;
     gaussianSigma = 5; % deg
-    sigmoidSlope = 10; % num
+    sigmoidSlope = 0.1; % num
     
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
@@ -68,19 +68,19 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     function draw()
         
         % not in the matlab spirit, but I could not figure it out
-        for e = 1:nrOfVisualPreferences,
-            for v = 1:nrOfEyePositionPrefrerence,
+        for i = 1:nrOfVisualPreferences,
+            for j = 1:nrOfEyePositionPrefrerence,
                 
                 e = eyePositionPreferences(i);
                 v = visualPreferences(j);
                 
                 % visual component
-                sigmoidPositive(i,j) = exp((retinalPositions - v).^2/2*gaussianSigma^2);
-                sigmoidNegative(i,j) = exp((retinalPositions - v).^2/2*gaussianSigma^2);
+                sigmoidPositive(j,i) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
+                sigmoidNegative(j,i) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
                 
                 % eye modulation
-                sigmoidPositive(i,j) = sigmoidPositive(e,v) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
-                sigmoidNegative(i,j) = sigmoidNegative(e,v) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
+                sigmoidPositive(j,i) = sigmoidPositive(j, i) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
+                sigmoidNegative(j,i) = sigmoidNegative(j, i) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
                 
             end
         end
@@ -88,12 +88,14 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        colorbar
+        %colorbar
+        set(gca,'YDir','normal')
         
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        colorbar
+        %colorbar
+        set(gca,'YDir','normal')
         
         % input space
         subplot(3,1,3);

@@ -11,9 +11,9 @@ function DGSimple(filename)
     % General
     nrOfVisualTargetLocations   = 10;
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 4;	% (Hz)
-    fixationDuration            = 0.7;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 40;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
+    samplingRate                = 5;	% (Hz)
+    fixationDuration            = 1;	% (s) - fixation period after each saccade
+    saccadeAmplitude            = 3;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
@@ -50,7 +50,7 @@ function DGSimple(filename)
         eyePosition = leftEdgeOfVisualField;                % Center on 0, start on left edge (e.g. -100 deg)
     
         doTimeSteps();
-        
+        disp('object done*******************');
         fwrite(fileID, NaN('single'), 'float'); % transform flag
     end
 
@@ -66,7 +66,7 @@ function DGSimple(filename)
             % Do one timestep
             remainederOfTimeStep = timeStep; % how much of present time step remains
 
-            while remainederOfTimeStep > 0,
+            while remainederOfTimeStep > 0, 
 
                 if ~state, % fixating
                     timeToNextState = fixationDuration - stateTimer;
@@ -74,29 +74,38 @@ function DGSimple(filename)
                     timeToNextState = saccadeDuration - stateTimer;
                 end
 
-                if timeToNextState < remainederOfTimeStep, % we can change state within remaining time
+                switchState = timeToNextState < remainederOfTimeStep;
+                
+                if switchState, % we must change state within remaining time
 
-                    state ~= state;                                                   % change to fixation state
-                    stateTimer = 0;                                                   % reset timer at fixation state
-                    remainederOfTimeStep = remainederOfTimeStep - timeToNextState; % consume time
-                    eyePosition = eyePosition + saccadeVelocity*timeToNextState;   % eyes move
-                    
+                    state ~= state;                                                   % change state
+                    stateTimer = 0;                                                   % reset timer for new state
+                    consume = timeToNextState;
+
                 else % we cannot change state within remaining time
 
-                    stateTimer = stateTimer + remainederOfTimeStep;                   % move timer 
-                    remainederOfTimeStep = 0;                                         % consume time
-                    eyePosition = eyePosition + saccadeVelocity*remainederOfTimeStep; % eyes move
+                    stateTimer = stateTimer + remainederOfTimeStep;                   % move timer
+                    consume = remainederOfTimeStep;                                   
+                    % we could break here, but what the heck
                 end
+                
+                remainederOfTimeStep = remainederOfTimeStep - consume;                % consume time
+                    
+                if xor(state, switchState)
+                    eyePosition = eyePosition + saccadeVelocity*consume;               % eyes move
+                end
+                
             end
-
+            
             % Output data point if we are still within visual field
             if eyePosition < rightEdgeOfVisualField,
-                disp('writing');
+                disp(['Saved datapoint, eye :' num2str(eyePosition) ', ret ' num2str(t - eyePosition)] );
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
             else
                 return;
             end
+            
         end
 
     end
