@@ -34,12 +34,21 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     nrOfVisualPreferences = length(visualPreferences);
     nrOfEyePositionPrefrerence = length(eyePositionPreferences);
     
-    % allocate space ones
+    % allocate space, is reused
     sigmoidPositive = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
     sigmoidNegative = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
     
     % Update time counter
     OneDVisualizeTimer = OneDVisualizeTimer + timeStep;
+    total = uint64(OneDVisualizeTimer * 1000);
+    
+    fullMin = idivide(total, 60*1000);
+    totalWithoutFullMin = mod(total, 60*1000);
+    
+    fullSec = idivide(totalWithoutFullMin, 1000);
+    
+    fullMs = mod(totalWithoutFullMin, 1000);
+    
     disp(OneDVisualizeTimer);
     
     % Read sample from file
@@ -89,13 +98,18 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         subplot(3,1,1);
         imagesc(sigmoidPositive);
         %colorbar
-        set(gca,'YDir','normal')
+        set(gca,'YDir','normal');
+        axis square;
+        
+        tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
+        title(tickTitle);
         
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
         %colorbar
         set(gca,'YDir','normal')
+        axis square;
         
         % input space
         subplot(3,1,3);
@@ -103,6 +117,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         y = retinalPositions;
         plot(x, y,'r*');
         axis([leftEdgeOfVisualField rightEdgeOfVisualField leftEdgeOfVisualField rightEdgeOfVisualField]);
+        axis square;
     end
 
 end

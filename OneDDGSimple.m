@@ -9,11 +9,11 @@
 function DGSimple(filename)
 
     % General
-    nrOfVisualTargetLocations   = 10;
+    nrOfVisualTargetLocations   = 3;
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 5;	% (Hz)
+    samplingRate                = 2;	% (Hz)
     fixationDuration            = 1;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 3;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
+    saccadeAmplitude            = 10;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
@@ -23,13 +23,17 @@ function DGSimple(filename)
 
     % non-Elmsley
     visualFieldSize = 200; % Entire visual field (rougly 100 per eye), (deg)
-
+    
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     leftEdgeOfVisualField = -visualFieldSize/2;
     rightEdgeOfVisualField = visualFieldSize/2;
-
+    targets = leftEdgeOfVisualField:visualFieldSize/nrOfVisualTargetLocations:rightEdgeOfVisualField;
+    
+    leftEdgeOfEyeMovementField = ;
+    rightEdgeOfEyeMovementField = ; 
+     
     % Open file
     fileID = fopen(filename,'w');
 
@@ -40,8 +44,6 @@ function DGSimple(filename)
     fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets, needed to parse data
 
     % Output data sequence for each target
-    targets = leftEdgeOfVisualField:visualFieldSize/nrOfVisualTargetLocations:rightEdgeOfVisualField;
-
     for t = targets,
         
         % Dynamical quantities
@@ -74,11 +76,11 @@ function DGSimple(filename)
                     timeToNextState = saccadeDuration - stateTimer;
                 end
 
-                switchState = timeToNextState < remainederOfTimeStep;
+                switchState = timeToNextState <= remainederOfTimeStep;
                 
                 if switchState, % we must change state within remaining time
 
-                    state ~= state;                                                   % change state
+                    state = ~state;                                                   % change state
                     stateTimer = 0;                                                   % reset timer for new state
                     consume = timeToNextState;
 
@@ -91,7 +93,7 @@ function DGSimple(filename)
                 
                 remainederOfTimeStep = remainederOfTimeStep - consume;                % consume time
                     
-                if xor(state, switchState)
+                if xor(state, switchState),
                     eyePosition = eyePosition + saccadeVelocity*consume;               % eyes move
                 end
                 

@@ -12,7 +12,7 @@ function OneDVisualize(filename)
     global OneDVisualizeTimeObject;
     OneDVisualizeTimer = 0;
     
-    playBackSlowDownUp = 1; 
+    playBackSlowDownUp = 0.3; 
 
     % Open file
     fileID = fopen(filename);
