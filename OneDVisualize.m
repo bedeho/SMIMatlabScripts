@@ -12,7 +12,7 @@ function OneDVisualize(filename)
     global OneDVisualizeTimeObject;
     OneDVisualizeTimer = 0;
     
-    playBackSlowDownUp = 0.3; 
+    playBackSlowDownUp = 0.1; 
 
     % Open file
     fileID = fopen(filename);
@@ -20,6 +20,8 @@ function OneDVisualize(filename)
     % Read header
     samplingRate = fread(fileID, 1, 'uint');               % Rate of sampling
     numberOfSimultanousObjects = fread(fileID, 1, 'uint'); % Number of simultanously visible targets, needed to parse data
+    visualFieldSize = fread(fileID, 1, 'float');           % Size of visual field
+    eyePositionFieldSize = fread(fileID, 1, 'float');
 
     % Derived
     timeStep = 1/samplingRate;
@@ -31,7 +33,7 @@ function OneDVisualize(filename)
     % Setup timer
     % Good video on timers: http://blogs.mathworks.com/pick/2008/05/05/advanced-matlab-timer-objects/
     OneDVisualizeTimeObject = timer('Period', period, 'ExecutionMode', 'fixedSpacing');
-    set(OneDVisualizeTimeObject, 'TimerFcn', {@OneDVisualize_TimerFcn, fileID, timeStep, numberOfSimultanousObjects, fig});
+    set(OneDVisualizeTimeObject, 'TimerFcn', {@OneDVisualize_TimerFcn, fileID, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig});
     set(OneDVisualizeTimeObject, 'StopFcn', {@OneDVisualize_StopFcn, fileID});
 
     % Start timer

@@ -9,7 +9,7 @@
 function DGSimple(filename)
 
     % General
-    nrOfVisualTargetLocations   = 3;
+    nrOfVisualTargetLocations   = 10;
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 2;	% (Hz)
     fixationDuration            = 1;	% (s) - fixation period after each saccade
@@ -27,12 +27,13 @@ function DGSimple(filename)
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
-    leftEdgeOfVisualField = -visualFieldSize/2;
-    rightEdgeOfVisualField = visualFieldSize/2;
-    targets = leftEdgeOfVisualField:visualFieldSize/nrOfVisualTargetLocations:rightEdgeOfVisualField;
+    targets = centerN(visualFieldSize, nrOfVisualTargetLocations);
     
-    leftEdgeOfEyeMovementField = ;
-    rightEdgeOfEyeMovementField = ; 
+    % Make sure eye movement range is sufficiently confined to always keep any
+    % target on retina
+    eyePositionFieldSize = visualFieldSize - targets(end);
+    leftMostEyePosition = -eyePositionFieldSize/2;
+    rightMostEyePosition = eyePositionFieldSize/2; 
      
     % Open file
     fileID = fopen(filename,'w');
@@ -42,14 +43,16 @@ function DGSimple(filename)
 
     fwrite(fileID, samplingRate, 'uint');               % Rate of sampling
     fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets, needed to parse data
-
+    fwrite(fileID, visualFieldSize, 'float');
+    fwrite(fileID, eyePositionFieldSize, 'float');
+   
     % Output data sequence for each target
     for t = targets,
         
         % Dynamical quantities
         state = 0;                                          % 0 = fixating, 1 = saccading
         stateTimer = 0;                                     % the duration of the present state
-        eyePosition = leftEdgeOfVisualField;                % Center on 0, start on left edge (e.g. -100 deg)
+        eyePosition = leftMostEyePosition;           % Center on 0, start on left edge (e.g. -100 deg)
     
         doTimeSteps();
         disp('object done*******************');
@@ -100,8 +103,8 @@ function DGSimple(filename)
             end
             
             % Output data point if we are still within visual field
-            if eyePosition < rightEdgeOfVisualField,
-                disp(['Saved datapoint, eye :' num2str(eyePosition) ', ret ' num2str(t - eyePosition)] );
+            if eyePosition < rightMostEyePosition,
+                disp(['Saved eye :' num2str(eyePosition) ', ret ' num2str(t - eyePosition)]);
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
             else
