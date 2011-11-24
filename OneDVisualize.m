@@ -12,7 +12,7 @@ function OneDVisualize(filename)
     global OneDVisualizeTimeObject;
     OneDVisualizeTimer = 0;
     
-    playBackSlowDownUp = 0.1; 
+    playAtPrcntOfOriginalSpeed = 0.5;
 
     % Open file
     fileID = fopen(filename);
@@ -25,7 +25,7 @@ function OneDVisualize(filename)
 
     % Derived
     timeStep = 1/samplingRate;
-    period = timeStep * playBackSlowDownUp;
+    period = timeStep / playAtPrcntOfOriginalSpeed;
     
     % Make figure
     fig = figure();

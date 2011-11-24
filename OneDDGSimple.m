@@ -50,9 +50,9 @@ function DGSimple(filename)
     for t = targets,
         
         % Dynamical quantities
-        state = 0;                                          % 0 = fixating, 1 = saccading
-        stateTimer = 0;                                     % the duration of the present state
-        eyePosition = leftMostEyePosition;           % Center on 0, start on left edge (e.g. -100 deg)
+        state = 0;                                      % 0 = fixating, 1 = saccading
+        stateTimer = 0;                                 % the duration of the present state
+        eyePosition = leftMostEyePosition;              % Center on 0, start on left edge (e.g. -100 deg)
     
         doTimeSteps();
         disp('object done*******************');
