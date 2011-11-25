@@ -5,6 +5,8 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
+%  Purpose: visualizes 1d data
+%
 
 function OneDVisualize(filename)
 

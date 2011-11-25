@@ -25,47 +25,49 @@ function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loa
     frewind(fileID);
     
     % Read history dimensions & number of regions
-    v = fread(fileID, 5, SOURCE_PLATFORM_USHORT);
+    v = fread(fileID, 4, SOURCE_PLATFORM_USHORT);
     
     historyDimensions.numEpochs = v(1);
     historyDimensions.numObjects = v(2);
-    historyDimensions.numTransforms = v(3);
-    historyDimensions.numOutputsPrTransform = v(4);
+    historyDimensions.numOutputsPrObject = v(3);
 
     % Compound stream sizes
-    historyDimensions.transformSize = historyDimensions.numOutputsPrTransform;
-    historyDimensions.objectSize = historyDimensions.transformSize * historyDimensions.numTransforms;
+    historyDimensions.objectSize = historyDimensions.numOutputsPrObject;
     historyDimensions.epochSize = historyDimensions.objectSize * historyDimensions.numObjects;
     historyDimensions.streamSize = historyDimensions.epochSize * historyDimensions.numEpochs;
     
     % Preallocate struct array
-    numRegions = v(5);
-    networkDimensions(numRegions).dimension = [];
+    numRegions = v(4);
+    networkDimensions(numRegions).y_dimension = [];
+    networkDimensions(numRegions).x_dimension = [];
     networkDimensions(numRegions).depth = []; 
     neuronOffsets = cell(numRegions,1); % {1} is left empty because V1 is not included
     
     % Read dimensions
     for r=1:numRegions,
-        dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
-        depth = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
         
-        networkDimensions(r).dimension = dimension;
+        y_dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
+        x_dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
+        depth       = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
+        
+        networkDimensions(r).y_dimension = y_dimension;
+        networkDimensions(r).x_dimension = x_dimension;
         networkDimensions(r).depth = depth;
         
-        neuronOffsets{r}(dimension, dimension, depth).offset = [];
-        neuronOffsets{r}(dimension, dimension, depth).nr = [];
+        neuronOffsets{r}(y_dimension, x_dimension, depth).offset = [];
+        neuronOffsets{r}(y_dimension, x_dimension, depth).nr = [];
     end
     
     % We compute the size of header just read
-    headerSize = SOURCE_PLATFORM_USHORT_SIZE*(5 + 2 * numRegions);
+    headerSize = SOURCE_PLATFORM_USHORT_SIZE*(4 + 3 * numRegions);
     
     % Compute and store the offset of each neuron's datastream in the file, not V1
     offset = headerSize; 
     nrOfNeurons = 1;
     for r=2:numRegions,
         for d=1:networkDimensions(r).depth, % Region depth
-            for row=1:networkDimensions(r).dimension, % Region row
-                for col=1:networkDimensions(r).dimension, % Region col
+            for row=1:networkDimensions(r).y_dimension, % Region row
+                for col=1:networkDimensions(r).x_dimension, % Region col
                     
                     neuronOffsets{r}(row, col, d).offset = offset;
                     neuronOffsets{r}(row, col, d).nr = nrOfNeurons;

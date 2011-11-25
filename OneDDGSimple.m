@@ -5,7 +5,7 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-
+%  Purpose: Generates the simplest possible 1d dynamical data
 function DGSimple(filename)
 
     % General

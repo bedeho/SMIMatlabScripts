@@ -5,8 +5,8 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-
 % Draws graphics - TimerFcn callback 
+
 function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
 
     global OneDVisualizeTimer;      % must be global to be visible across callbacks
