@@ -15,7 +15,7 @@
 %  depth: neuron depth
 %  maxEpoch (optional): largest epoch you are interested in
 %  Output========
-%  Activity history of region/depth: 6-d array (timestep, transform, object, epoch, row, col) 
+%  Activity history of region/depth: 5-d array (timestep, object, epoch, row, col) 
 
 function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, maxEpoch)
 
@@ -34,7 +34,8 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
         end
     end
     
-    dimension = networkDimensions(region).dimension;
+    dimension_y = networkDimensions(region).y_dimension;
+    dimension_x = networkDimensions(region).x_dimension;
     
     % When we are looking for full epoch history, we can get it all in one chunk
     if maxEpoch == historyDimensions.numEpochs,
@@ -43,27 +44,27 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
         fseek(fileID, neuronOffsets{region}(1, 1, depth).offset, 'bof');
 
         % Read into buffer
-        streamSize = dimension * dimension * maxEpoch * historyDimensions.epochSize;
+        streamSize = dimension_y * dimension_x * maxEpoch * historyDimensions.epochSize;
         [buffer count] = fread(fileID, streamSize, SOURCE_PLATFORM_FLOAT);
         
         if count ~= streamSize,
             error(['Read ' num2str(count) ' bytes, ' num2str(streamSize) ' expected ']);
         end
 
-        activity = reshape(buffer, [historyDimensions.numOutputsPrTransform historyDimensions.numTransforms historyDimensions.numObjects maxEpoch dimension dimension]);
+        activity = reshape(buffer, [historyDimensions.numOutputsPrObject historyDimensions.numObjects maxEpoch y_dimension x_dimension]);
         
         % Because file is saved in row major,
         % and reshape fills in buffer in column major,
         % we have to permute the last two dimensions (row,col)
-        activity = permute(activity, [1 2 3 4 6 5]);
+        activity = permute(activity, [1 2 3 5 4]);
     else
         %When we are looking for partial epoch history, then we have to
         %seek betweene neurons, so we just use neuronHistory() routine
         
-        activity = zeros(historyDimensions.numOutputsPrTransform, historyDimensions.numTransforms, historyDimensions.numObjects, maxEpoch, dimension, dimension);
+        activity = zeros(historyDimensions.numOutputsPrObject, historyDimensions.numObjects, maxEpoch, y_dimension, x_dimension);
         
-        for row=1:dimension,
-            for col=1:dimension,
+        for row=1:y_dimension,
+            for col=1:x_dimension,
                 activity(:, :, :, :, row, col) = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
             end
         end

@@ -43,33 +43,33 @@ function plotNetworkHistory(filename, depth, maxEpoch)
     % Plot
     for e=1:maxEpoch,
         for o=1:historyDimensions.numObjects,
-            for t=1:historyDimensions.numTransforms,
+            
+            fig = figure();
+            title(['Epoch: ' num2str(e) ', Object:' num2str(o)]);
+            plotCounter = 1;
 
-                fig = figure();
-                title(['Epoch: ', num2str(e), ', Object:', num2str(o), ', Transform:', num2str(t)]);
-                plotCounter = 1;
+            for r=2:numRegions,
                 
-                for r=2:numRegions,
-                    
-                    dimension = networkDimensions(r).dimension;
-                    
-                    for ti=1:historyDimensions.numOutputsPrTransform,
+                y_dimension = networkDimensions(r).y_dimension;
+                x_dimension = networkDimensions(r).x_dimension;
+                
+                for ti=1:historyDimensions.numOutputsPrObject,
 
-                        subplot(numRegions-1, historyDimensions.numOutputsPrTransform, plotCounter);
+                    subplot(numRegions-1, historyDimensions.numOutputsPrObject, plotCounter);
 
-                        a = activity{r-1}(ti, t, o, e, :, :);
-                        imagesc(reshape(a, [dimension dimension]));
-                        axis square;
-                        %colorbar
-                        hold on;
+                    a = activity{r-1}(ti, o, e, :, :);
+                    imagesc(reshape(a, [y_dimension x_dimension]));
+                    axis square;
+                    %colorbar
+                    hold on;
 
-                        plotCounter = plotCounter + 1;
-                    end
+                    plotCounter = plotCounter + 1;
                 end
-
-                makeFigureFullScreen(fig);
-                pause
             end
+
+            makeFigureFullScreen(fig);
+            pause
+
         end
     end 
    

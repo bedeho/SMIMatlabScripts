@@ -16,7 +16,7 @@
 %  depth: neuron depth
 %  maxEpoch (optional): largest epoch you are interested in
 %  Output========
-%  Activity history of region: 4-d matrix (timestep, transform, object, epoch)
+%  Activity history of region: 3-d matrix (timestep, object, epoch)
 
 function [activity] = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch)
 
@@ -42,4 +42,4 @@ function [activity] = neuronHistory(fileID, networkDimensions, historyDimensions
     end
     
     % Make history array
-    activity = reshape(buffer, [historyDimensions.numOutputsPrTransform historyDimensions.numTransforms historyDimensions.numObjects maxEpoch]);
+    activity = reshape(buffer, [historyDimensions.numOutputsPrObject historyDimensions.numObjects maxEpoch]);
