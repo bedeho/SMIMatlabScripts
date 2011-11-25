@@ -58,6 +58,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     % Stop timer if this was last object in file
     if feof(fileID),
         stop(OneDVisualizeTimeObject);
+        disp('object done********************');
         return;
     end
     
@@ -70,8 +71,6 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
          draw();
          
     else
-        disp('object done********************');
-        
         return;
     end
     
