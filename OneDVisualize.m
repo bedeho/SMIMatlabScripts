@@ -18,8 +18,8 @@ function OneDVisualize(filename)
     fileID = fopen(filename);
 
     % Read header
-    samplingRate = fread(fileID, 1, 'uint');               % Rate of sampling
-    numberOfSimultanousObjects = fread(fileID, 1, 'uint'); % Number of simultanously visible targets, needed to parse data
+    samplingRate = fread(fileID, 1, 'ushort');               % Rate of sampling
+    numberOfSimultanousObjects = fread(fileID, 1, 'ushort'); % Number of simultanously visible targets, needed to parse data
     visualFieldSize = fread(fileID, 1, 'float');           % Size of visual field
     eyePositionFieldSize = fread(fileID, 1, 'float');
 

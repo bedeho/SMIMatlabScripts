@@ -9,9 +9,9 @@
 function DGSimple(filename)
 
     % General
-    nrOfVisualTargetLocations   = 10;
+    nrOfVisualTargetLocations   = 4;
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 2;	% (Hz)
+    samplingRate                = 10;	% (Hz)
     fixationDuration            = 1;	% (s) - fixation period after each saccade
     saccadeAmplitude            = 10;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
@@ -22,7 +22,7 @@ function DGSimple(filename)
     % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
 
     % non-Elmsley
-    visualFieldSize = 200; % Entire visual field (rougly 100 per eye), (deg)
+    visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
     
     % Derived
     timeStep = 1/samplingRate;
@@ -31,7 +31,7 @@ function DGSimple(filename)
     
     % Make sure eye movement range is sufficiently confined to always keep any
     % target on retina
-    eyePositionFieldSize = visualFieldSize - targets(end);
+    eyePositionFieldSize = visualFieldSize - targets(end)
     leftMostEyePosition = -eyePositionFieldSize/2;
     rightMostEyePosition = eyePositionFieldSize/2; 
      
@@ -41,8 +41,8 @@ function DGSimple(filename)
     % Make header
     numberOfSimultanousObjects = 1;
 
-    fwrite(fileID, samplingRate, 'uint');               % Rate of sampling
-    fwrite(fileID, numberOfSimultanousObjects, 'uint'); % Number of simultanously visible targets, needed to parse data
+    fwrite(fileID, samplingRate, 'ushort');               % Rate of sampling
+    fwrite(fileID, numberOfSimultanousObjects, 'ushort'); % Number of simultanously visible targets, needed to parse data
     fwrite(fileID, visualFieldSize, 'float');
     fwrite(fileID, eyePositionFieldSize, 'float');
    
