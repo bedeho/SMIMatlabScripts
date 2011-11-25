@@ -43,7 +43,8 @@ function [fig, figImg, fullInvariance, meanInvariance, nrOfSingleCell, multiCell
     
     numEpochs = historyDimensions.numEpochs;
     numTransforms = historyDimensions.numTransforms;
-    regionDimension = networkDimensions(region).dimension; 
+    %regionDimension = networkDimensions(region).dimension;
+    
     MaxInfo = log2(historyDimensions.numObjects);
     numCells = regionDimension*regionDimension;
     

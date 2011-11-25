@@ -27,7 +27,8 @@ function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
     numRegions = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
 
     % Preallocate struct array
-    networkDimensions(numRegions).dimension = [];
+    networkDimensions(numRegions).y_dimension = [];
+    networkDimensions(numRegions).x_dimension = [];
     networkDimensions(numRegions).depth = [];
     
     % Allocate cell data structure, {1} is left empty because V1 is not
@@ -38,17 +39,19 @@ function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
     nrOfNeurons = 0;
     for r=1:numRegions,
         
-        dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
+        y_dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
+        x_dimension = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
         depth = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
         
-        networkDimensions(r).dimension = dimension;
+        networkDimensions(r).y_dimension = y_dimension;
+        networkDimensions(r).x_dimension = x_dimension;
         networkDimensions(r).depth = depth;
 
-        neuronOffsets{r}(dimension, dimension, depth).afferentSynapseCount = [];
-        neuronOffsets{r}(dimension, dimension, depth).offset = [];
+        neuronOffsets{r}(y_dimension, x_dimension, depth).afferentSynapseCount = [];
+        neuronOffsets{r}(y_dimension, x_dimension, depth).offset = [];
         
         if r > 1,
-            nrOfNeurons = nrOfNeurons + dimension * dimension * depth;
+            nrOfNeurons = nrOfNeurons + y_dimension * x_dimension * depth;
         end
     end
 
@@ -59,12 +62,12 @@ function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
     buffer = fread(fileID, nrOfNeurons, SOURCE_PLATFORM_USHORT);
     
     % We compute the size of header just read
-    offset = SOURCE_PLATFORM_USHORT_SIZE*(1 + 2 * numRegions + nrOfNeurons);
+    offset = SOURCE_PLATFORM_USHORT_SIZE*(1 + 3 * numRegions + nrOfNeurons);
     counter = 0;
     for r=2:numRegions,
         for d=1:networkDimensions(r).depth, % Region depth
-            for row=1:networkDimensions(r).dimension, % Region row
-                for col=1:networkDimensions(r).dimension, % Region col
+            for row=1:networkDimensions(r).y_dimension, % Region row
+                for col=1:networkDimensions(r).x_dimension, % Region col
                     
                     afferentSynapseCount = buffer(counter + 1);
                     
