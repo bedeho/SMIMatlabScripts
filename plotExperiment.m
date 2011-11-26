@@ -97,7 +97,7 @@ function plotExperiment(experiment)
                 netDir = [experimentFolder  simulation '/' summary(s).directory];
                 
                 figCommand                  = ['matlab:open(\''' netDir '/result_1.fig\'')'];
-                %fig2Command                 = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
+                fig2Command                 = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
                 inspectorCommand            = ['matlab:inspectRegionInvariance(\''' netDir '\'',\''' summary(s).directory '.txt\'')'];
                 firingCommand               = ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')'];
                 activationCommand           = ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')'];
@@ -155,7 +155,7 @@ function plotExperiment(experiment)
                     fprintf(fileID, '<input type="button" value="Activation" onclick="document.location=''%s''"/></br>', activationCommand);
                     fprintf(fileID, '<input type="button" value="IActivation" onclick="document.location=''%s''"/></br>', inhibitedActivationCommand);
                     fprintf(fileID, '<input type="button" value="Trace" onclick="document.location=''%s''"/></br>', traceCommand);
-                    %fprintf(fileID, '<input type="button" value="Percentile" onclick="document.location=''%s''"/></br>', fig2Command);
+                    fprintf(fileID, '<input type="button" value="Percentile" onclick="document.location=''%s''"/></br>', fig2Command);
                     fprintf(fileID, '</td>');
                 
                 fprintf(fileID, '</tr>\n');

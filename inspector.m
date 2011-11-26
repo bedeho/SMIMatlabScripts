@@ -20,7 +20,7 @@ function inspector(folder, networkFile)
     % Fill in missing arguments    
     if nargin < 2,
         networkFile = 'TrainedNetwork.txt';
-    end
+    end 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Invariance Plots
@@ -42,7 +42,7 @@ function inspector(folder, networkFile)
     numRegions = length(networkDimensions);
     depth = 1;
     numEpochs = historyDimensions.numEpochs;
-    numTransforms = historyDimensions.numTransforms;
+    %numTransforms = historyDimensions.numTransforms;
     numObjects = historyDimensions.numObjects;
     floatError = 0.1;
     
@@ -66,7 +66,7 @@ function inspector(folder, networkFile)
     for r=2:numRegions,
         
         % Get region activity
-        regionDimension = networkDimensions(r).dimension;
+        %regionDimension = networkDimensions(r).dimension;
         regionActivity{r - 1} = regionHistory(invarianceFileID, historyDimensions, neuronOffsets, networkDimensions, r, depth, numEpochs);
 
         % Save axis
