@@ -10,7 +10,7 @@
 %  experiment: experiment name
 %  simulation: simulation name
 
-function [summary] = plotSimulation(experiment, simulation)
+function [summary] = plotSimulation(experiment, simulation, nrOfEyePositionsInTesting)
 
     % Import global variables
     declareGlobalVars();
@@ -37,16 +37,15 @@ function [summary] = plotSimulation(experiment, simulation)
             
             netDir = [simulationFolder directory];
             
-            [fig, figImg, fullInvariance, meanInvariance, nrOfSingleCell, multiCell] = plotRegion([netDir '/firingRate.dat']);
+            [regionCorrelationPlot] = plotRegion([netDir '/firingRate.dat'], nrOfEyePositionsInTesting);
             
-            saveas(fig,[netDir '/result_1.fig']);
-            saveas(figImg,[netDir '/result_1.png']);
+            saveas(regionCorrelationPlot,[netDir '/result_1.fig']);
             
-            delete(fig);
-            delete(figImg);
+            delete(regionCorrelationPlot);
             
             % Save results for summary
             summary(counter).directory = directory;
+            summary(counter).nrOfHeadCenteredCells =  nnz(regionCorrelationPlot > 0); % Count number of cells with positive correlation
             
             %summary(counter).fullInvariance = fullInvariance;
             %summary(counter).meanInvariance = meanInvariance;

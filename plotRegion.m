@@ -14,13 +14,10 @@
 %  row: neuron row
 %  col: neuron column
 
-
-function [fig, figImg, fullInvariance, meanInvariance, nrOfSingleCell, multiCell] = plotRegion(filename, region, depth)
+function [regionCorrelationPlot] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
 
     % Import global variables
     declareGlobalVars();
-    
-    global INFO_ANALYSIS_FOLDER;
 
     % Open file
     fileID = fopen(filename);
@@ -29,10 +26,10 @@ function [fig, figImg, fullInvariance, meanInvariance, nrOfSingleCell, multiCell
     [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID);
     
     % Fill in missing arguments    
-    if nargin < 3,
+    if nargin < 4,
         depth = 1;                                  % pick top layer
         
-        if nargin < 2,
+        if nargin < 3,
             region = length(networkDimensions);     % pick last region
         end
     end
@@ -41,78 +38,50 @@ function [fig, figImg, fullInvariance, meanInvariance, nrOfSingleCell, multiCell
         error('Region is to small');
     end
     
-    numEpochs = historyDimensions.numEpochs;
-    numTransforms = historyDimensions.numTransforms;
-    %regionDimension = networkDimensions(region).dimension;
+    numEpochs           = historyDimensions.numEpochs;
+    numObjects          = historyDimensions.numObjects;
+    numOutputsPrObject  = historyDimensions.numOutputsPrObject;
+    y_dimension         = networkDimensions(region).y_dimension;
+    x_dimension         = networkDimensions(region).x_dimension;
     
-    MaxInfo = log2(historyDimensions.numObjects);
-    numCells = regionDimension*regionDimension;
+    result                 = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, numEpochs);
+    dataAtLastStepPrObject = result(numOutputsPrObject, :, numEpochs, :, :); % (object, row, col)
     
-    % Allocate data structure
-    invariance = zeros(regionDimension, regionDimension, historyDimensions.numObjects);
-    bins = zeros(numTransforms + 1,1);
+    if mod(numObjects, nrOfEyePositionsInTesting) != 0,
+        error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
+    end
     
-    % Setup Max vars
-    fullInvariance = 0;
-    meanInvariance = 0;
+    objectsPrEyePosition = numObjects / nrOfEyePositionsInTesting;
+    regionCorrelation = zeros(y_dimension, x_dimension);
     
-    fig = figure();
-    figImg = figure();
+    regionCorrelationPlot = figure();
     
-    floatError = 0.1;
-    
-    tic
-    
-    [pathstr, name, ext] = fileparts(filename);
-    
-    disp(['***Processing' pathstr]);
-    
-    barPlot = zeros(historyDimensions.numObjects, numTransforms);
-    
-    % Iterate objects
-    for o = 1:historyDimensions.numObjects,           % pick all objects,
-        
-        % Zero out from last object
-        bins = 0*bins;
-        
-        % Old school: this was before I started using regionHistory and was
-        % array jedi!
-        for row = 1:regionDimension,
-
-            for col = 1:regionDimension,
-
-                % Get history array
-                activity = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, numEpochs); % pick last epoch
-
-                % Count number of non zero elements
-                count = length(find(activity(historyDimensions.numOutputsPrTransform, :, o, numEpochs) > floatError));
-
-                % Save in proper bin and in invariance surface
-                invariance(row, col, o) = count;
-                bins(count + 1) = bins(count + 1) + 1;
+    for row = 1:y_dimension,
+        for col = 1:x_dimension,
+            
+            corr = 0;
+            
+            for eyePosition = 1:(nrOfEyePositionsInTesting - 1),
+                
+                % Get final state of each fixation
+                allDataForThisNeuron = dataAtLastStepPrObject(:, row, col);
+                
+                % Get data from fixations belonging to two consecutive eye
+                % positions
+                firstPoint = 1 + (eyePosition - 1)*objectsPrEyePosition;
+                lastPoint = first + 2*objectsPrEyePosition - 1;
+                
+                consecutiveEyePositions = allDataForThisNeuron(firstPoint:lastPoint);
+                
+                observationMatrix = reshape(consecutiveEyePositions, [objectsPrEyePosition 2]);
+                
+                % Compute correlation
+                correlationMatrix = corrcoef(observationMatrix);
+                corr = corr + correlationMatrix(1,2); % pick random nondiagonal element :)
             end
+            
+            regionCorrelation(row, col) = corr / (nrOfEyePositionsInTesting - 1); % average correlatin
         end
-        
-        b = bins(2:length(bins));
-        figure(fig); % Set as present figure
-        subplot(3, 1, 1);
-        plot(b);
-        hold all;
-        
-        barPlot(o,:) = b;
-        
-        % Update max values
-        fullInvariance = fullInvariance + b(numTransforms); % The latter is the number of neurons that are fully invariant
-        meanInvariance = meanInvariance + dot((b./(sum(b))),1:numTransforms); % The latter is the mean level of invariance
     end
     
     fclose(fileID);
-    
-    figure(figImg); % Set as present figure
-    bar(barPlot'); %./numCells Normalize
-    hold all;
-    axis tight;
-    
-    figure(fig); % Set as present figure
-    axis tight;
-    

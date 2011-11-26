@@ -15,7 +15,7 @@
 %  depth: neuron depth
 %  maxEpoch (optional): largest epoch you are interested in
 %  Output========
-%  Activity history of region/depth: 5-d array (timestep, object, epoch, row, col) 
+%  Activity history of region/depth: 4-d array (timestep, object, epoch, row, col) 
 
 function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, maxEpoch)
 

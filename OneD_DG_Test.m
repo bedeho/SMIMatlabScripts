@@ -25,8 +25,8 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
     % General
     %nrOfVisualTargetLocations   = 4;
     nrOfTestingTargets          = 6;
-    nrOfEyePositions            = 6;
-    samplingRate                = 5;	% (Hz)
+    nrOfEyePositions            = 3;
+    samplingRate                = 10;	% (Hz)
     fixationDuration            = 1;	% (s) - fixation period after each saccade
 
     % non-Elmsley
@@ -51,12 +51,12 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
    
     % Output data sequence for each target
     for e = eyePositions,
-        for t = targets + e,
+        for t = targets,
             for sampleCounter = 1:samplesPrLocation,
             
-                disp(['Saved eye :' num2str(e) ', ret ' num2str(t - e)]);
+                disp(['Saved eye :' num2str(e) ', ret ' num2str(t)]);
                 fwrite(fileID, e, 'float'); % Eye position (HFP)
-                fwrite(fileID, t - e, 'float'); % Fixation offset of target
+                fwrite(fileID, t, 'float'); % Fixation offset of target
             end
             
             disp('object done*******************');

@@ -80,7 +80,7 @@ function inspector(folder, networkFile)
             if numObjects > 1,
                 responsePrObject = sum(raw);
                 responsePrCell = sum(responsePrObject);
-                responsePrCell = squeeze(responsePrCell); % sum leaves singleton dimention
+                responsePrCell = squeeze(responsePrCell); % sum leaves singleton dimension
             else
                 responsePrObject = sum(raw);
                 responsePrCell = responsePrObject;
@@ -90,7 +90,7 @@ function inspector(folder, networkFile)
             if numObjects > 1,
                 responsePrObject = squeeze(raw);
                 responsePrCell = sum(responsePrObject);
-                responsePrCell = squeeze(responsePrCell); % sum leaves singleton dimention
+                responsePrCell = squeeze(responsePrCell); % sum leaves singleton dimension
             else
                 responsePrObject = squeeze(raw);
                 responsePrCell = responsePrObject;

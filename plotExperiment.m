@@ -7,7 +7,7 @@
 %
 %  Purpose: Create summary of
 
-function plotExperiment(experiment)
+function plotExperiment(experiment, nrOfEyePositionsInTesting)
 
     % Import global variables
     declareGlobalVars();
@@ -61,8 +61,9 @@ function plotExperiment(experiment)
         fprintf(fileID, ['<th>' parameters{p,1} '</th>']);
     end
     
-    %{
+    
         fprintf(fileID, '<th>#</th>');
+    %{    
         fprintf(fileID, '<th>Mean</th>');
         fprintf(fileID, '<th>SCA</th>');
         fprintf(fileID, '<th>MCA</th>');
@@ -90,7 +91,7 @@ function plotExperiment(experiment)
             disp(['******** Doing ' num2str(counter) ' out of ' num2str((nnz([listing(:).isdir]) - 2)) '********']); 
             counter = counter + 1;
             
-            summary = plotSimulation(experiment, simulation);
+            summary = plotSimulation(experiment, simulation, nrOfEyePositionsInTesting);
 
             for s=1:length(summary),
                 
@@ -130,14 +131,16 @@ function plotExperiment(experiment)
 
                         % Mean
                         fprintf(fileID, '<td> %d </td>', summary(s).meanInvariance);
-
+%}
                         % SCA
-                        if summary(s).nrOfSingleCell < 0.1,
-                            fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).nrOfSingleCell);
+                        
+                        if summary(s).nrOfHeadCenteredCells > 0,
+                            fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).nrOfHeadCenteredCells);
                         else    
-                            fprintf(fileID, '<td> %d </td>', summary(s).nrOfSingleCell);
+                            fprintf(fileID, '<td> %d </td>', summary(s).nrOfHeadCenteredCells);
                         end
-
+                        
+%{
                         % MCA
                         if summary(s).multiCell < 0.1,
                             fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).multiCell);
