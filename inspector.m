@@ -50,7 +50,7 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
     %Wavelengths = [2];
     
     % Allocate datastructure
-    regionActivity = cell(numRegions - 1);
+    regionCorrs = cell(numRegions - 1);
     axisVals = zeros(numRegions, nrOfColumns);
     
     
@@ -70,6 +70,10 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
     
     % Restructure to access data on eye position basis
     dataPrEyePosition      = reshape(dataAtLastStepPrObject, [objectsPrEyePosition nrOfEyePositionsInTesting y_dimension x_dimension]); % (object, eye_position, row, col)
+    
+    % Zero out error terms
+    floatError = 0.01; % Cutoff for being designated as silent
+    dataPrEyePosition(dataPrEyePosition < floatError) = 0;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
@@ -125,7 +129,9 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
 
         %}
         
+        % Compute and save correlation
         corr = regionCorrelation(firingFileID, historyDimensions, neuronOffsets, networkDimensions, numRegions, depth, nrOfEyePositionsInTesting);
+        regionCorrs{r-1} = corr;
         
         % Save axis
         axisVals(r-1, 2) = subplot(numRegions, nrOfColumns, plotNr(r-1, 2));
@@ -290,7 +296,7 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
         
         %markerSpecifiers = {'+', 'o', '*', '.', 'x', 's', 'd', '^', 'v', '>', '<', 'p', 'h'''};
         
-        markerSpecifiers = {'+', '.', 'x', 's', 'd', '^', 'v', '>', '<', 'p', 'h'''}
+        markerSpecifiers = {'+', '.', 'x', 's', 'd', '^', 'v', '>', '<', 'p', 'h'''};
         
         % Populate response plot
         axisVals(numRegions, [1 nrOfColumns]) = subplot(numRegions, nrOfColumns, [plotNr(numRegions, 1), plotNr(numRegions, nrOfColumns)]);
@@ -299,7 +305,7 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
         
         for e= 1:nrOfEyePositionsInTesting,
             
-            v = dataPrEyePosition(:, e, row, col);
+            v = dataPrEyePosition(:, e, row, col)
             
             if max(v) > m,
                 m = max(v);
@@ -311,10 +317,13 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
         end  
         
         if m > 1,
-            axis([1 nrOfEyePositionsInTesting -0.1 m]);
+            axis([1 objectsPrEyePosition -0.1 m]);
         else
-            axis([1 nrOfEyePositionsInTesting -0.1 1.1]);
+            axis([1 objectsPrEyePosition -0.1 1.1]);
         end
+        
+        % Dump correlation
+        regionCorrs{r-1}(row,col)
         
         
         hold;

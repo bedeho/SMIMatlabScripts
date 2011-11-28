@@ -11,8 +11,7 @@ function [regionCorrelation] = regionCorrelation(fileID, historyDimensions, neur
     % Validate input
     validateNeuron('regionCorrelation.m', networkDimensions, region, depth);
     
-    % Cutoff for being designated as silent
-    floatError = 0.01;
+
     
     numEpochs           = historyDimensions.numEpochs;
     numObjects          = historyDimensions.numObjects;
@@ -35,12 +34,21 @@ function [regionCorrelation] = regionCorrelation(fileID, historyDimensions, neur
     % Restructure to access data on eye position basis
     dataPrEyePosition      = reshape(dataAtLastStepPrObject, [objectsPrEyePosition nrOfEyePositionsInTesting y_dimension x_dimension]); % (object, eye_position, row, col)
     
+    % Zero out error terms
+    floatError = 0.01; % Cutoff for being designated as silent
+    dataPrEyePosition(dataPrEyePosition < floatError) = 0;
+    
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     regionCorrelation = zeros(y_dimension, x_dimension);
     
     for row = 1:y_dimension,
         for col = 1:x_dimension,
+            
+            if row == 11 && col == 20,
+                disp 'found it';
+            end
             
             corr = 0;
             
