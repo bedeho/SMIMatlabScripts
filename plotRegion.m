@@ -5,14 +5,6 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  PLOT REGION INVARIANCE
-%  Input=========
-%  filename: filename of weight file
-%  standalone: whether gui should be shown (i.e standalone == true)
-%  region: region to plot, V1 = 1
-%  depth: region depth to plot
-%  row: neuron row
-%  col: neuron column
 
 function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
 

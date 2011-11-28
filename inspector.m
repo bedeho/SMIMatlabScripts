@@ -5,14 +5,8 @@
 %  Created by Bedeho Mender on 29/04/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  PLOT REGION INVARIANCE
-%  Input=========
-%  filename: filename of weight file
-%  standalone: whether gui should be shown (i.e standalone == true)
-%  Output========
-%
 
-function inspector(folder, networkFile)
+function inspector(folder, networkFile, nrOfEyePositionsInTesting)
 
     % Import global variables
     declareGlobalVars();
@@ -27,38 +21,58 @@ function inspector(folder, networkFile)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Open files
-    invarianceFileID = fopen([folder '/firingRate.dat']);
+    firingFileID = fopen([folder '/firingRate.dat']);
     
     % Read header
-    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(invarianceFileID);
+    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(firingFileID);
     
     % Open file
-    connectivityFileID = fopen([folder '/' networkFile]);
+    %%connectivityFileID = fopen([folder '/' networkFile]);
 
     % Read header
-    [networkDimensions, neuronOffsets2] = loadWeightFileHeader(connectivityFileID);
+    %[networkDimensions, neuronOffsets2] = loadWeightFileHeader(connectivityFileID);
         
     % Setup vars
-    numRegions = length(networkDimensions);
-    depth = 1;
-    numEpochs = historyDimensions.numEpochs;
-    numObjects = historyDimensions.numObjects;
+    depth               = 1;    
+    %floatError          = 0.01;
+    %synapseTHRESHOLD    = 0.15;
+    nrOfColumns         = 3;
+    
+    numRegions          = length(networkDimensions);
+    numEpochs           = historyDimensions.numEpochs;
+    numObjects          = historyDimensions.numObjects;
     numOutputsPrObject  = historyDimensions.numOutputsPrObject;
+    y_dimension         = networkDimensions(numRegions).y_dimension;
+    x_dimension         = networkDimensions(numRegions).x_dimension;
     
-    floatError = 0.01;
-    
-    synapseTHRESHOLD = 0.15;
-    
-    Phases = [0, 180, -90, 90];
-    Orrientations = [0, 45, 90, 135];
-    Wavelengths = [2];
+    %Phases = [0, 180, -90, 90];
+    %Orrientations = [0, 45, 90, 135];
+    %Wavelengths = [2];
     
     % Allocate datastructure
     regionActivity = cell(numRegions - 1);
-    axisVals = zeros(numRegions, 3);
+    axisVals = zeros(numRegions, nrOfColumns);
     
-    %axisVals(i,1) = axisVals(i,2) = for region V(i+1)
-    %axisVals(i,3) = for region Vi
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
+        error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
+    end
+    
+    objectsPrEyePosition   = numObjects / nrOfEyePositionsInTesting;
+    
+    % Pre-process data
+    result                 = regionHistory(firingFileID, historyDimensions, neuronOffsets, networkDimensions, numRegions, depth, numEpochs);
+    
+    % Get final state of each fixation
+    dataAtLastStepPrObject = squeeze(result(numOutputsPrObject, :, numEpochs, :, :)); % (object, row, col)
+    
+    % Restructure to access data on eye position basis
+    dataPrEyePosition      = reshape(dataAtLastStepPrObject, [objectsPrEyePosition nrOfEyePositionsInTesting y_dimension x_dimension]); % (object, eye_position, row, col)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
     
     fig = figure();
     
@@ -67,12 +81,10 @@ function inspector(folder, networkFile)
     % 2) Setup callbacks for mouse clicks
     for r=2:numRegions,
         
-        % Get region activity
-        %regionDimension = networkDimensions(r).dimension;
-        regionActivity{r - 1} = regionHistory(invarianceFileID, historyDimensions, neuronOffsets, networkDimensions, r, depth, numEpochs);
-
+        %{
+        
         % Save axis
-        axisVals(r-1,1) = subplot(numRegions, 3, 3*(numRegions - r) + 1);
+        axisVals(r-1,1) = subplot(numRegions, nrOfColumns, plotNr(r-1, 1));
         
         raw = regionActivity{r - 1}(historyDimensions.numOutputsPrTransform, :, :, numEpochs, :, :);
         raw = raw > floatError;
@@ -111,29 +123,33 @@ function inspector(folder, networkFile)
         
         axis tight;
 
+        %}
+        
+        corr = regionCorrelation(firingFileID, historyDimensions, neuronOffsets, networkDimensions, numRegions, depth, nrOfEyePositionsInTesting);
+        
         % Save axis
-        axisVals(r-1, 2) = subplot(numRegions, 3, 3*(numRegions - r) + 2);
+        axisVals(r-1, 2) = subplot(numRegions, nrOfColumns, plotNr(r-1, 2));
         
-        im = imagesc(responsePrCell);
+        im = imagesc(corr);
         colorbar
-        colormap(jet(max(max(responsePrCell)) + 1)); %();
+        axis square
+        %colormap(jet(max(max(corr)) + 1));
         
-        axis tight;
         
         % Setup callback
-        set(im, 'ButtonDownFcn', {@invarianceCallBack, r});
+        set(im, 'ButtonDownFcn', {@responseCallBack, r});
     end
     
-    fclose(invarianceFileID);
+    fclose(firingFileID);
     
     % Setup blank present cell invariance plot
-    axisVals(numRegions, [1 3]) = subplot(numRegions, 3, [3*(numRegions-1) + 1, 3*(numRegions-1) + 3]);
+    axisVals(numRegions, [1 nrOfColumns]) = subplot(numRegions, nrOfColumns, [plotNr(numRegions, 1), plotNr(numRegions, nrOfColumns)]);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Weight Plots
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    
+    %{
     % Setup dummy weight plots
     for r=1:(numRegions-1)
 
@@ -152,13 +168,15 @@ function inspector(folder, networkFile)
         end
     end
     
+    %}
+    
     makeFigureFullScreen(fig);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % CALLBACKS
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    function invarianceCallBack(varargin)
+    function responseCallBack(varargin)
         
         % Extract region,row,col
         region = varargin{3};
@@ -166,7 +184,7 @@ function inspector(folder, networkFile)
         buttonClick = get(gcf,'SelectionType');
         
         pos=get(axisVals(region-1, 2), 'CurrentPoint');
-        [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).dimension);
+        [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
         disp(['You clicked R:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)]);
@@ -174,11 +192,12 @@ function inspector(folder, networkFile)
         if strcmp(buttonClick, 'alt'), % Normal left mouse click
             plotSynapseHistory(folder, region, 1, row, col, numEpochs);
         else % Right mouse click, open synapse history
-            updateInvariancePlot(region, row, col);
-            updateWeightPlot(region, row, col);
+            updateCellReponsePlot(region, row, col);
+            %updateWeightPlot(region, row, col);
         end
     end
-    
+
+     %{
     function connectivityCallBack(varargin)
         
         % Extract region,row,col
@@ -265,26 +284,43 @@ function inspector(folder, networkFile)
 
     end
 
-    function updateInvariancePlot(region, row, col)
+%}
+
+    function updateCellReponsePlot(region, row, col)
         
-        % Populate invariance plot
-        subplot(numRegions, 3, [3*(numRegions-1) + 1, 3*(numRegions-1) + 3]);
+        %markerSpecifiers = {'+', 'o', '*', '.', 'x', 's', 'd', '^', 'v', '>', '<', 'p', 'h'''};
         
-        for obj=1:numObjects,
+        markerSpecifiers = {'+', '.', 'x', 's', 'd', '^', 'v', '>', '<', 'p', 'h'''}
+        
+        % Populate response plot
+        axisVals(numRegions, [1 nrOfColumns]) = subplot(numRegions, nrOfColumns, [plotNr(numRegions, 1), plotNr(numRegions, nrOfColumns)]);
+        
+        m = 0;
+        
+        for e= 1:nrOfEyePositionsInTesting,
             
-            plot(regionActivity{region - 1}(historyDimensions.numOutputsPrTransform, :, obj, numEpochs, row, col)); %> floatError
+            v = dataPrEyePosition(:, e, row, col);
+            
+            if max(v) > m,
+                m = max(v);
+            end
+            
+            plot(v, [':' markerSpecifiers{e}]);
+            
             hold all;
         end  
         
-        if numTransforms > 1,
-            axis([1 numTransforms -0.1 1.1]);
+        if m > 1,
+            axis([1 nrOfEyePositionsInTesting -0.1 m]);
         else
-            axis([0 2 -0.1 1.1]);
+            axis([1 nrOfEyePositionsInTesting -0.1 1.1]);
         end
+        
         
         hold;
     end
 
+%{
     function updateWeightPlot(region, row, col) 
 
         % Get weightbox
@@ -337,12 +373,20 @@ function inspector(folder, networkFile)
         orrientation = Orrientations(o+1);
     end 
 
+%}
+
+    function [nr] = plotNr(row, col)
+
+        nr = nrOfColumns*(row - 1) + col; %(numRegions - row)
+
+    end
+
 end
 
 % Made with random experiemtnation with imagesc behavior, MAY not work
 % in other settings because of border BS, check it out later, use
 % ginput() if possible 
-function [row, col] = imagescClick(i, j, dimension)
+function [row, col] = imagescClick(i, j, y_dimension, x_dimension)
 
     if i < 1
         row = 1;
@@ -355,10 +399,9 @@ function [row, col] = imagescClick(i, j, dimension)
     else
         col = round(j);
 
-        if col > dimension,
-            col = dimension;
+        if col > x_dimension,
+            col = x_dimension;
         end
     end
 end
-
 
