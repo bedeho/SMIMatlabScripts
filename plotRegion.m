@@ -14,7 +14,7 @@
 %  row: neuron row
 %  col: neuron column
 
-function [regionCorrelationPlot, regionCorrelation] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
+function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
 
     % Import global variables
     declareGlobalVars();
@@ -38,54 +38,10 @@ function [regionCorrelationPlot, regionCorrelation] = plotRegion(filename, nrOfE
         error('Region is to small');
     end
     
-    numEpochs           = historyDimensions.numEpochs;
-    numObjects          = historyDimensions.numObjects;
-    numOutputsPrObject  = historyDimensions.numOutputsPrObject;
-    y_dimension         = networkDimensions(region).y_dimension;
-    x_dimension         = networkDimensions(region).x_dimension;
-    
-    result                 = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, numEpochs);
-    dataAtLastStepPrObject = squeeze(result(numOutputsPrObject, :, numEpochs, :, :)); % (object, row, col)
-    
-    if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
-        error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
-    end
-    
-    objectsPrEyePosition = numObjects / nrOfEyePositionsInTesting;
-    regionCorrelation = zeros(y_dimension, x_dimension);
-    
+    corr = regionCorrelation(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePositionsInTesting);
+
     regionCorrelationPlot = figure();
-    
-    for row = 1:y_dimension,
-        for col = 1:x_dimension,
-            
-            corr = 0;
-            
-            for eyePosition = 1:(nrOfEyePositionsInTesting - 1),
-                
-                % Get final state of each fixation
-                allDataForThisNeuron = dataAtLastStepPrObject(:, row, col);
-                
-                % Get data from fixations belonging to two consecutive eye
-                % positions
-                firstPoint = 1 + (eyePosition - 1)*objectsPrEyePosition;
-                lastPoint = firstPoint + 2*objectsPrEyePosition - 1;
-                
-                consecutiveEyePositions = allDataForThisNeuron(firstPoint:lastPoint);
-                
-                observationMatrix = reshape(consecutiveEyePositions, [objectsPrEyePosition 2]);
-                
-                % Compute correlation
-                correlationMatrix = corrcoef(observationMatrix);
-                c = correlationMatrix(1,2)
-                corr = corr + c; % pick random nondiagonal element :)
-            end
-            
-            regionCorrelation(row, col) = corr / (nrOfEyePositionsInTesting - 1); % average correlatin
-        end
-    end
-    
-    imagesc(regionCorrelation);
+    imagesc(corr);
     colorbar;
     
     fclose(fileID);

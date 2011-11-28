@@ -42,11 +42,13 @@ function inspector(folder, networkFile)
     numRegions = length(networkDimensions);
     depth = 1;
     numEpochs = historyDimensions.numEpochs;
-    %numTransforms = historyDimensions.numTransforms;
     numObjects = historyDimensions.numObjects;
-    floatError = 0.1;
+    numOutputsPrObject  = historyDimensions.numOutputsPrObject;
     
-    THRESHOLD = 0.15;
+    floatError = 0.01;
+    
+    synapseTHRESHOLD = 0.15;
+    
     Phases = [0, 180, -90, 90];
     Orrientations = [0, 45, 90, 135];
     Wavelengths = [2];
@@ -130,6 +132,7 @@ function inspector(folder, networkFile)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Weight Plots
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     
     % Setup dummy weight plots
     for r=1:(numRegions-1)
@@ -253,7 +256,7 @@ function inspector(folder, networkFile)
                     % Check that presynaptic neuron is in lower region (in
                     % case feedback network we dont want eternal loop), and
                     % that weight is over threshold
-                    if synapses(s).weight > THRESHOLD && synapses(s).region < region
+                    if synapses(s).weight > synapseTHRESHOLD && synapses(s).region < region
                         sources = [sources findV1Sources(synapses(s).region, synapses(s).depth, synapses(s).row, synapses(s).col)];
                     end
                 end

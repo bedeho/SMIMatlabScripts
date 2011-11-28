@@ -8,12 +8,18 @@
 %  Purpose: visualizes 1d data
 %
 
-function OneD_Visualize(filename)
+function OneD_Visualize(stimuliName)
 
+    % Import global variables
+    declareGlobalVars();
+    
+    global base;
     global OneDVisualizeTimer;
     global OneDVisualizeTimeObject;
     OneDVisualizeTimer = 0;
-    
+
+    filename = [base 'Stimuli/' stimuliName '/data.dat'];
+
     playAtPrcntOfOriginalSpeed = 0.5;
 
     % Open file
