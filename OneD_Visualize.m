@@ -1,5 +1,5 @@
 %
-%  1DVisualize.m
+%  OneD_Visualize.m
 %  SMI
 %
 %  Created by Bedeho Mender on 15/11/11.
@@ -8,7 +8,7 @@
 %  Purpose: visualizes 1d data
 %
 
-function OneDVisualize(filename)
+function OneD_Visualize(filename)
 
     global OneDVisualizeTimer;
     global OneDVisualizeTimeObject;

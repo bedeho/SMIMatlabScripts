@@ -37,15 +37,16 @@ function [summary] = plotSimulation(experiment, simulation, nrOfEyePositionsInTe
             
             netDir = [simulationFolder directory];
             
-            [regionCorrelationPlot] = plotRegion([netDir '/firingRate.dat'], nrOfEyePositionsInTesting);
+            [regionCorrelationPlot, regionCorrelation] = plotRegion([netDir '/firingRate.dat'], nrOfEyePositionsInTesting);
             
             saveas(regionCorrelationPlot,[netDir '/result_1.fig']);
+            saveas(regionCorrelationPlot,[netDir '/result_1.png']);
             
             delete(regionCorrelationPlot);
             
             % Save results for summary
             summary(counter).directory = directory;
-            summary(counter).nrOfHeadCenteredCells =  nnz(regionCorrelationPlot > 0); % Count number of cells with positive correlation
+            summary(counter).nrOfHeadCenteredCells =  nnz(regionCorrelation > 0); % Count number of cells with positive correlation
             
             %summary(counter).fullInvariance = fullInvariance;
             %summary(counter).meanInvariance = meanInvariance;

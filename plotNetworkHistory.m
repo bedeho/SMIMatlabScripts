@@ -57,10 +57,10 @@ function plotNetworkHistory(filename, depth, maxEpoch)
 
                     subplot(numRegions-1, historyDimensions.numOutputsPrObject, plotCounter);
 
-                    a = activity{r-1}(ti, o, e, :, :);
+                    a = activity{r-1 }(ti, o, e, :, :);
                     imagesc(reshape(a, [y_dimension x_dimension]));
                     axis square;
-                    %colorbar
+                    colorbar
                     hold on;
 
                     plotCounter = plotCounter + 1;

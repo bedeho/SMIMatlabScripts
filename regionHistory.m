@@ -34,8 +34,8 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
         end
     end
     
-    dimension_y = networkDimensions(region).y_dimension;
-    dimension_x = networkDimensions(region).x_dimension;
+    y_dimension = networkDimensions(region).y_dimension;
+    x_dimension = networkDimensions(region).x_dimension;
     
     % When we are looking for full epoch history, we can get it all in one chunk
     if maxEpoch == historyDimensions.numEpochs,
@@ -44,7 +44,7 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
         fseek(fileID, neuronOffsets{region}(1, 1, depth).offset, 'bof');
 
         % Read into buffer
-        streamSize = dimension_y * dimension_x * maxEpoch * historyDimensions.epochSize;
+        streamSize = y_dimension * x_dimension * maxEpoch * historyDimensions.epochSize;
         [buffer count] = fread(fileID, streamSize, SOURCE_PLATFORM_FLOAT);
         
         if count ~= streamSize,

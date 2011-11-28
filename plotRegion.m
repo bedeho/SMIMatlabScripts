@@ -14,7 +14,7 @@
 %  row: neuron row
 %  col: neuron column
 
-function [regionCorrelationPlot] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
+function [regionCorrelationPlot, regionCorrelation] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
 
     % Import global variables
     declareGlobalVars();
@@ -45,9 +45,9 @@ function [regionCorrelationPlot] = plotRegion(filename, nrOfEyePositionsInTestin
     x_dimension         = networkDimensions(region).x_dimension;
     
     result                 = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, numEpochs);
-    dataAtLastStepPrObject = result(numOutputsPrObject, :, numEpochs, :, :); % (object, row, col)
+    dataAtLastStepPrObject = squeeze(result(numOutputsPrObject, :, numEpochs, :, :)); % (object, row, col)
     
-    if mod(numObjects, nrOfEyePositionsInTesting) != 0,
+    if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
         error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
     end
     
@@ -69,7 +69,7 @@ function [regionCorrelationPlot] = plotRegion(filename, nrOfEyePositionsInTestin
                 % Get data from fixations belonging to two consecutive eye
                 % positions
                 firstPoint = 1 + (eyePosition - 1)*objectsPrEyePosition;
-                lastPoint = first + 2*objectsPrEyePosition - 1;
+                lastPoint = firstPoint + 2*objectsPrEyePosition - 1;
                 
                 consecutiveEyePositions = allDataForThisNeuron(firstPoint:lastPoint);
                 
@@ -77,11 +77,15 @@ function [regionCorrelationPlot] = plotRegion(filename, nrOfEyePositionsInTestin
                 
                 % Compute correlation
                 correlationMatrix = corrcoef(observationMatrix);
-                corr = corr + correlationMatrix(1,2); % pick random nondiagonal element :)
+                c = correlationMatrix(1,2)
+                corr = corr + c; % pick random nondiagonal element :)
             end
             
             regionCorrelation(row, col) = corr / (nrOfEyePositionsInTesting - 1); % average correlatin
         end
     end
+    
+    imagesc(regionCorrelation);
+    colorbar;
     
     fclose(fileID);
