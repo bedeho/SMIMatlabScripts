@@ -54,7 +54,7 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
         for t = targets,
             for sampleCounter = 1:samplesPrLocation,
             
-                disp(['Saved eye :' num2str(e) ', ret ' num2str(t)]);
+                disp(['Saved: eye =' num2str(e) ', ret =' num2str(t)]);
                 fwrite(fileID, e, 'float'); % Eye position (HFP)
                 fwrite(fileID, t, 'float'); % Fixation offset of target
             end

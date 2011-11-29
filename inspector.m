@@ -325,6 +325,10 @@ function inspector(folder, networkFile, nrOfEyePositionsInTesting)
         % Dump correlation
         regionCorrs{r-1}(row,col)
         
+        set(gca,'XLim',[1 objectsPrEyePosition])
+        set(gca,'XTick', 1:objectsPrEyePosition)
+        %set(gca,'XTickLabel',['0';' ';'1';' ';'2';' ';'3';' ';'4'])
+        
         
         hold;
     end

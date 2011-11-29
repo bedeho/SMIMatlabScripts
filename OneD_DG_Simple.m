@@ -24,6 +24,8 @@ function OneD_DG_Simple(stimuliName)
 
     % General
     nrOfVisualTargetLocations   = 4;
+    
+    % Movement parameters
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 10;	% (Hz)
     fixationDuration            = 1;	% (s) - fixation period after each saccade
@@ -36,7 +38,8 @@ function OneD_DG_Simple(stimuliName)
     % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
 
     % non-Elmsley
-    visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
+    visualFieldSize             = 200 % Entire visual field (rougly 100 per eye), (deg)
+    targetLocationBoundary      = 50;
     
     % Derived
     timeStep = 1/samplingRate;
@@ -45,7 +48,7 @@ function OneD_DG_Simple(stimuliName)
     
     % Make sure eye movement range is sufficiently confined to always keep any
     % target on retina
-    eyePositionFieldSize = visualFieldSize - targets(end)
+    eyePositionFieldSize = visualFieldSize - 2*targets(end)
     leftMostEyePosition = -eyePositionFieldSize/2;
     rightMostEyePosition = eyePositionFieldSize/2; 
      
@@ -114,14 +117,14 @@ function OneD_DG_Simple(stimuliName)
                 remainederOfTimeStep = remainederOfTimeStep - consume;                % consume time
                     
                 if xor(state, switchState),
-                    eyePosition = eyePosition + saccadeVelocity*consume;               % eyes move
+                    eyePosition = eyePosition + saccadeVelocity*consume;              % eyes move
                 end
                 
             end
             
             % Output data point if we are still within visual field
             if eyePosition < rightMostEyePosition,
-                disp(['Saved eye :' num2str(eyePosition) ', ret ' num2str(t - eyePosition)]);
+                disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]);
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
             else

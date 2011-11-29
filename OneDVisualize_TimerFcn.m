@@ -10,8 +10,7 @@
 function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
 
     global OneDVisualizeTimer;      % must be global to be visible across callbacks
-    global OneDVisualizeTimeObject; % tried to expose it to make it stoppable in console.. didnt work
-    
+    global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
     % LIP Parameters
     visualPreferenceDistance = 2;
     eyePositionPrefrerenceDistance = 2;
@@ -66,7 +65,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     if ~isnan(eyePosition),
          retinalPositions = fread(fileID, numberOfSimultanousObjects,'float'); % Fixation offset of target
          
-         disp(['Read eye: ' num2str(eyePosition) ', ret: ' num2str(retinalPositions)]);
+         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
 
          draw();
          
@@ -97,10 +96,15 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
             end
         end
         
+        % Clean up so that it is not hidden from us that stimuli is off
+        % retina
+        sigmoidPositive(sigmoidPositive < 0.001) = 0;
+        sigmoidNegative(sigmoidNegative < 0.001) = 0;
+        
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        %colorbar
+        colorbar
         set(gca,'YDir','normal');
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
@@ -109,7 +113,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        %colorbar
+        colorbar
         set(gca,'YDir','normal');
         
         % input space
