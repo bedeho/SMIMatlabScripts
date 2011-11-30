@@ -56,8 +56,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     
     % Stop timer if this was last object in file
     if feof(fileID),
-        stop(OneDVisualizeTimeObject);
-        disp('object done********************');
+        stop(OneDVisualizeTimeObject);clear
         return;
     end
     
@@ -70,6 +69,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
          draw();
          
     else
+        disp('object done********************');
         return;
     end
     
@@ -104,7 +104,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        colorbar
+        %colorbar
         set(gca,'YDir','normal');
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
@@ -113,7 +113,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        colorbar
+        %colorbar
         set(gca,'YDir','normal');
         
         % input space

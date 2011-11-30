@@ -27,8 +27,8 @@ function OneD_DG_Simple(stimuliName)
     
     % Movement parameters
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 10;	% (Hz)
-    fixationDuration            = 1;	% (s) - fixation period after each saccade
+    samplingRate                = 30;	% (Hz)
+    fixationDuration            = 0.25;	% (s) - fixation period after each saccade
     saccadeAmplitude            = 10;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Elmsley eye model
@@ -39,12 +39,12 @@ function OneD_DG_Simple(stimuliName)
 
     % non-Elmsley
     visualFieldSize             = 200 % Entire visual field (rougly 100 per eye), (deg)
-    targetLocationBoundary      = 50;
+    targetRangeProportionOfVisualField = 0.5;
     
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
-    targets = centerN(visualFieldSize, nrOfVisualTargetLocations);
+    targets = centerN(visualFieldSize * targetRangeProportionOfVisualField, nrOfVisualTargetLocations);
     
     % Make sure eye movement range is sufficiently confined to always keep any
     % target on retina
@@ -53,7 +53,8 @@ function OneD_DG_Simple(stimuliName)
     rightMostEyePosition = eyePositionFieldSize/2; 
      
     % Open file
-    fileID = fopen([stimuliFolder '/data.dat'],'w');
+    filename = [stimuliFolder '/data.dat'];
+    fileID = fopen(filename,'w');
 
     % Make header
     numberOfSimultanousObjects = 1;
@@ -73,14 +74,24 @@ function OneD_DG_Simple(stimuliName)
     
         doTimeSteps();
         disp('object done*******************');
-        fwrite(fileID, NaN('single'), 'float'); % transform flag
+        fwrite(fileID, NaN('single'), 'float');         % transform flag
     end
 
     % Close file
     fclose(fileID);
     
+    % Create payload for xgrid
+    startDir = pwd;
+    cd(stimuliFolder);
+    [status, result] = system('tar -cvf xgridPayload.tbz data.dat');
+    if status,
+        error(['Could not create xgridPayload.tbz' result]);
+    end
+    cd(startDir);
+    
     % Generate complementary testing data
-    OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize);
+    targetBoundary = targets(end);
+    OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionFieldSize);
 
     function doTimeSteps()
 
@@ -124,7 +135,7 @@ function OneD_DG_Simple(stimuliName)
             
             % Output data point if we are still within visual field
             if eyePosition < rightMostEyePosition,
-                disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]);
+                disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]); % relationhip is t = r + e
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
             else

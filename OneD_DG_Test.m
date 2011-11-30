@@ -8,7 +8,7 @@
 %  Purpose: Generate testing data
 %
 
-function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
+function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionFieldSize)
 
     % Import global variables
     declareGlobalVars();
@@ -24,10 +24,10 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
     
     % General
     %nrOfVisualTargetLocations   = 4;
-    nrOfTestingTargets          = 6;
+    nrOfTestingTargets          = 10;
     nrOfEyePositions            = 3;
     samplingRate                = 10;	% (Hz)
-    fixationDuration            = 1;	% (s) - fixation period after each saccade
+    fixationDuration            = 0.5;	% (s) - fixation period after each saccade
 
     % non-Elmsley
     %visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
@@ -36,12 +36,14 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
     timeStep                    = 1/samplingRate;
     samplesPrLocation           = fixationDuration / timeStep;
     
-    targets                     = centerN(visualFieldSize, nrOfTestingTargets);
+    %%targets                     = centerN(visualFieldSize, nrOfTestingTargets);
+    targets                     = centerN(2*targetBoundary, nrOfTestingTargets);
     %eyePositionFieldSize        = visualFieldSize - targets(end) % Make sure eye movement range is sufficiently confined to always keep any target on retina
     eyePositions                = centerN(eyePositionFieldSize, nrOfEyePositions);
     
     % Open file
-    fileID = fopen([stimuliFolder '/data.dat'],'w');
+    filename = [stimuliFolder '/data.dat'];
+    fileID = fopen(filename,'w');
 
     % Make header
     fwrite(fileID, samplingRate, 'ushort');               % Rate of sampling
@@ -54,9 +56,9 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
         for t = targets,
             for sampleCounter = 1:samplesPrLocation,
             
-                disp(['Saved: eye =' num2str(e) ', ret =' num2str(t)]);
+                disp(['Saved: eye =' num2str(e) ', ret =' num2str(t - e)]); % head centered data outputted, relationhip is t = r + e
                 fwrite(fileID, e, 'float'); % Eye position (HFP)
-                fwrite(fileID, t, 'float'); % Fixation offset of target
+                fwrite(fileID, t - e, 'float'); % Fixation offset of target
             end
             
             disp('object done*******************');
@@ -66,5 +68,14 @@ function OneD_DG_Test(stimuliName, visualFieldSize, eyePositionFieldSize)
 
     % Close file
     fclose(fileID);
+    
+    % Create payload for xgrid
+    startDir = pwd;
+    cd(stimuliFolder);
+    [status, result] = system('tar -cvf xgridPayload.tbz data.dat');
+    if status,
+        error(['Could not create xgridPayload.tbz' result]);
+    end
+    cd(startDir);
     
 end
