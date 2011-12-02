@@ -9,8 +9,12 @@
 
 function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
 
-    global OneDVisualizeTimer;      % must be global to be visible across callbacks
     global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
+
+    global buffer;
+    global sampleCounter;      % must be global to be visible across callbacks
+    global fileCounter;
+    
     % LIP Parameters
     visualPreferenceDistance = 2;
     eyePositionPrefrerenceDistance = 2;
@@ -41,7 +45,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     sigmoidNegative = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
     
     % Update time counter
-    OneDVisualizeTimer = OneDVisualizeTimer + timeStep;
+    OneDVisualizeTimer = sampleCounter*timeStep;
     total = uint64(OneDVisualizeTimer * 1000);
     
     fullMin = idivide(total, 60*1000);
@@ -52,21 +56,24 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     fullMs = mod(totalWithoutFullMin, 1000);
     
     % Read sample from file
-    eyePosition = fread(fileID, 1, 'float');
-    
-    % Stop timer if this was last object in file
-    if feof(fileID),
-        stop(OneDVisualizeTimeObject);clear
+    if fileCounter <= length(buffer),
+        eyePosition = buffer(fileCounter, 1);
+        fileCounter = fileCounter + 1;
+    else
+        stop(OneDVisualizeTimeObject);
         return;
     end
     
     % Consume reset
     if ~isnan(eyePosition),
-         retinalPositions = fread(fileID, numberOfSimultanousObjects,'float'); % Fixation offset of target
+        
+        sampleCounter = sampleCounter + 1;
+        
+        retinalPositions = buffer(sampleCounter, 2:(numberOfSimultanousObjects + 1)); 
          
-         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
-
-         draw();
+        disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
+        
+        draw();
          
     else
         disp('object done********************');
@@ -118,9 +125,20 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         
         % input space
         subplot(3,1,3);
-        x = eyePosition * ones(1, numberOfSimultanousObjects);
-        y = retinalPositions;
-        plot(x, y,'r*');
+        
+        % cleanup nan
+        temp = buffer;
+        v = isnan(buffer); % v(:,1) = get logical indexes for all nan rows
+        temp(v(:,1),:) = [];  % blank out all these rows
+        for o = 1:numberOfSimultanousObjects,
+            plot(temp(1:sampleCounter,1), temp(1:sampleCounter,o + 1) , 'o');
+            
+            hold on;
+        end
+        
+        %x = eyePosition * ones(1, numberOfSimultanousObjects);
+        %y = retinalPositions;
+        %plot(x, y,'r*');
         axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
     end
 

@@ -83,7 +83,7 @@ function OneD_DG_Simple(stimuliName)
     % Create payload for xgrid
     startDir = pwd;
     cd(stimuliFolder);
-    [status, result] = system('tar -cvf xgridPayload.tbz data.dat');
+    [status, result] = system('tar -cjvf xgridPayload.tbz data.dat');
     if status,
         error(['Could not create xgridPayload.tbz' result]);
     end
