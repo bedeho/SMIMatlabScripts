@@ -111,8 +111,8 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        %colorbar
         set(gca,'YDir','normal');
+        daspect([eyePositionFieldSize visualFieldSize 1]);
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
         title(tickTitle);
@@ -120,8 +120,8 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        %colorbar
         set(gca,'YDir','normal');
+        daspect([eyePositionFieldSize visualFieldSize 1]);
         
         % input space
         subplot(3,1,3);
@@ -135,6 +135,8 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
             
             hold on;
         end
+        daspect([eyePositionFieldSize visualFieldSize 1]);
+        axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
         
         %x = eyePosition * ones(1, numberOfSimultanousObjects);
         %y = retinalPositions;

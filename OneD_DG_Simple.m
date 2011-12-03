@@ -27,7 +27,7 @@ function OneD_DG_Simple(stimuliName)
     
     % Movement parameters
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 30;	% (Hz)
+    samplingRate                = 10;	% (Hz)
     fixationDuration            = 0.25;	% (s) - fixation period after each saccade
     saccadeAmplitude            = 10;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
