@@ -5,7 +5,7 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  Purpose: Create summary of
+%  Purpose: Create summary of parameter search
 
 function plotExperiment(experiment, nrOfEyePositionsInTesting)
 
@@ -19,26 +19,6 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     
     % Iterate simulations in this experiment folder
     listing = dir(experimentFolder); 
-    
-    % Save results for summary
-    filename = [experimentFolder 'Summary_' num2str(length(listing)) '.html']; % Make name that is always original so we dont overwrite old summary which is from previous xGridCleanup run of partial results from this same parameter search
-    fileID = fopen(filename, 'w'); % did note use datestr(now) since it has string
-    
-    fprintf(fileID, '<html><head>\n');
-    fprintf(fileID, '<style type="text/css" title="currentStyle">\n');
-                             
-    fprintf(fileID, ['@import "' base 'Scripts/DataTables-1.8.2/media/css/demo_page.css";\n']);
-	fprintf(fileID, ['@import "' base 'Scripts/DataTables-1.8.2/media/css/demo_table.css";\n']);
-	fprintf(fileID, '</style>\n');
-	fprintf(fileID, ['<script type="text/javascript" language="javascript" src="' base 'Scripts/DataTables-1.8.2/media/js/jquery.js"></script>\n']);
-	fprintf(fileID, ['<script type="text/javascript" language="javascript" src="' base 'Scripts/DataTables-1.8.2/media/js/jquery.dataTables.js"></script>\n']);
-	fprintf(fileID, '<script type="text/javascript" charset="utf-8">\n');
-	fprintf(fileID, '$(document).ready(function() { $("#example").dataTable();});\n');
-	fprintf(fileID, '</script>\n');
-    fprintf(fileID, '</head>\n');
-    fprintf(fileID, '<body>\n');
-    fprintf(fileID, '<h1>%s - %s</h1>\n', experiment, datestr(now));
-    fprintf(fileID, '<table id="example" class="display" cellpadding="10" style="border: solid 1px">\n');
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find an example of simulation directory to extract column names- HORRIBLY CODED
@@ -54,6 +34,30 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
+    % Save results for summary
+    filename = [experimentFolder 'Summary_' num2str(length(listing)) '.html']; % Make name that is always original so we dont overwrite old summary which is from previous xGridCleanup run of partial results from this same parameter search
+    fileID = fopen(filename, 'w'); % did note use datestr(now) since it has string
+    
+    % HTML header with javascript/css for JQUERY table plugin
+    fprintf(fileID, '<html><head>\n');
+    fprintf(fileID, '<style type="text/css" title="currentStyle">\n');
+                             
+    fprintf(fileID, ['@import "' base 'Scripts/DataTables-1.8.2/media/css/demo_page.css";\n']);
+	fprintf(fileID, ['@import "' base 'Scripts/DataTables-1.8.2/media/css/demo_table.css";\n']);
+	fprintf(fileID, '</style>\n');
+	fprintf(fileID, ['<script type="text/javascript" language="javascript" src="' base 'Scripts/DataTables-1.8.2/media/js/jquery.js"></script>\n']);
+	fprintf(fileID, ['<script type="text/javascript" language="javascript" src="' base 'Scripts/DataTables-1.8.2/media/js/jquery.dataTables.js"></script>\n']);
+	fprintf(fileID, '<script type="text/javascript" charset="utf-8">\n');
+	fprintf(fileID, '$(document).ready(function() { $("#example").dataTable();});\n');
+	fprintf(fileID, '</script>\n');
+    fprintf(fileID, '</head>\n');
+    fprintf(fileID, '<body>\n');
+    
+    % HTML Title
+    fprintf(fileID, '<h1>%s - %s</h1>\n', experiment, datestr(now));
+    
+    % HTML table
+    fprintf(fileID, '<table id="example" class="display" cellpadding="10" style="border: solid 1px">\n');
     fprintf(fileID, '<thead><tr>');
     fprintf(fileID, '<th>Name</th>');
     fprintf(fileID, '<th>Network</th>');
@@ -61,15 +65,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     for p = 1:nrOfParams,
         fprintf(fileID, ['<th>' parameters{p,1} '</th>']);
     end
-    
-    
-        fprintf(fileID, '<th>#</th>');
-    %{    
-        fprintf(fileID, '<th>Mean</th>');
-        fprintf(fileID, '<th>SCA</th>');
-        fprintf(fileID, '<th>MCA</th>');
-    %}
-    
+    fprintf(fileID, '<th>#</th>');
     fprintf(fileID, '<th>Action</th>');
     fprintf(fileID, '</tr></thead>');
     
@@ -99,15 +95,17 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                 netDir = [experimentFolder  simulation '/' summary(s).directory];
                 
                 figCommand                  = ['matlab:open(\''' netDir '/result_1.fig\'')'];
-                fig2Command                 = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
-                inspectorCommand            = ['matlab:inspectResponse(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
+                %fig2Command                = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
+                inspectResponseCommand      = ['matlab:inspectResponse(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
+                inspectWeightCommand        = ['matlab:inspectWeight(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
+                inspectRepresentationCommand= ['matlab:inspectRepresentation(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
                 firingCommand               = ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')'];
                 activationCommand           = ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')'];
                 inhibitedActivationCommand  = ['matlab:plotNetworkHistory(\''' netDir '/inhibitedActivation.dat\'')'];
                 traceCommand                = ['matlab:plotNetworkHistory(\''' netDir '/trace.dat\'')'];
                 
                 % Start row
-                fprintf(fileID, '<tr>'); %flip color here
+                fprintf(fileID, '<tr>');
                 
                     % Name
                     fprintf(fileID, '<td> %s </td>', simulation);
@@ -125,41 +123,23 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                         fprintf(fileID, ['<td> ' parameters{p,2} ' </td>']);
                     end
                     
-                    %{
-                    
-                        % #
-                        fprintf(fileID, '<td> %d </td>', summary(s).fullInvariance);
-
-                        % Mean
-                        fprintf(fileID, '<td> %d </td>', summary(s).meanInvariance);
-%}
-                        % SCA
+                    if summary(s).nrOfHeadCenteredCells > 0,
+                        fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).nrOfHeadCenteredCells);
+                    else    
+                        fprintf(fileID, '<td> %d </td>', summary(s).nrOfHeadCenteredCells);
+                    end
                         
-                        if summary(s).nrOfHeadCenteredCells > 0,
-                            fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).nrOfHeadCenteredCells);
-                        else    
-                            fprintf(fileID, '<td> %d </td>', summary(s).nrOfHeadCenteredCells);
-                        end
-                        
-%{
-                        % MCA
-                        if summary(s).multiCell < 0.1,
-                            fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).multiCell);
-                        else
-                            fprintf(fileID, '<td> %d </td>', summary(s).multiCell);
-                        end
-                    
-                    %}
-
                     % Action
                     fprintf(fileID, '<td>');
                     fprintf(fileID, '<input type="button" value="Figure" onclick="document.location=''%s''"/></br>', figCommand);
-                    fprintf(fileID, '<input type="button" value="Inspect" onclick="document.location=''%s''"/></br>', inspectorCommand);
+                    fprintf(fileID, '<input type="button" value="Response" onclick="document.location=''%s''"/></br>', inspectResponseCommand);
+                    fprintf(fileID, '<input type="button" value="Weights" onclick="document.location=''%s''"/></br>', inspectWeightCommand);
+                    fprintf(fileID, '<input type="button" value="Representation" onclick="document.location=''%s''"/></br>', inspectRepresentationCommand);
                     fprintf(fileID, '<input type="button" value="Firing" onclick="document.location=''%s''"/></br>', firingCommand);
                     fprintf(fileID, '<input type="button" value="Activation" onclick="document.location=''%s''"/></br>', activationCommand);
-                    fprintf(fileID, '<input type="button" value="IActivation" onclick="document.location=''%s''"/></br>', inhibitedActivationCommand);
-                    fprintf(fileID, '<input type="button" value="Trace" onclick="document.location=''%s''"/></br>', traceCommand);
-                    fprintf(fileID, '<input type="button" value="Percentile" onclick="document.location=''%s''"/></br>', fig2Command);
+                    %fprintf(fileID, '<input type="button" value="IActivation" onclick="document.location=''%s''"/></br>', inhibitedActivationCommand);
+                    %fprintf(fileID, '<input type="button" value="Trace" onclick="document.location=''%s''"/></br>', traceCommand);
+                    %fprintf(fileID, '<input type="button" value="Percentile" onclick="document.location=''%s''"/></br>', fig2Command);
                     fprintf(fileID, '</td>');
                 
                 fprintf(fileID, '</tr>\n');
@@ -167,9 +147,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
             
         end
     end
-    
-    %close(h);
-    
+
     fprintf(fileID, '</table></body></html>');
     fclose(fileID);
     
@@ -177,7 +155,6 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     
     % Thanks to DanTheMans excellent advice, now we dont
     % have to fire up terminal insessantly
-    
     
     disp('DONE...');
     system('stty echo');
