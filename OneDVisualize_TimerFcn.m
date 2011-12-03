@@ -5,9 +5,9 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-% Draws graphics - TimerFcn callback 
+%  Draws graphics - TimerFcn callback 
 
-function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
+function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
 
     global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
 
@@ -55,7 +55,7 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     
     fullMs = mod(totalWithoutFullMin, 1000);
     
-    % Read sample from file
+    % Read sample file
     if fileCounter <= length(buffer),
         eyePosition = buffer(fileCounter, 1);
         fileCounter = fileCounter + 1;
@@ -66,14 +66,18 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
     
     % Consume reset
     if ~isnan(eyePosition),
-        
-        sampleCounter = sampleCounter + 1;
-        
+
         retinalPositions = buffer(sampleCounter, 2:(numberOfSimultanousObjects + 1)); 
+        
+        if eyePosition == 57.5 && retinalPositions == -20,
+            eyePosition = eyePosition;
+        end
          
         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
         
         draw();
+        
+        sampleCounter = sampleCounter + 1;
          
     else
         disp('object done********************');
@@ -130,6 +134,8 @@ function OneDVisualize_TimerFcn(obj, event, fileID, timeStep, numberOfSimultanou
         temp = buffer;
         v = isnan(buffer); % v(:,1) = get logical indexes for all nan rows
         temp(v(:,1),:) = [];  % blank out all these rows
+        
+        % plot
         for o = 1:numberOfSimultanousObjects,
             plot(temp(1:sampleCounter,1), temp(1:sampleCounter,o + 1) , 'o');
             

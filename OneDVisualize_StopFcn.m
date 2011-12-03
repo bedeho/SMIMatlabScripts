@@ -6,14 +6,11 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-% Finishes up - StopFcn callback
-function OneDVisualize_StopFcn(obj, event, fileID)
+%  Purpose: StopFcn callback
+function OneDVisualize_StopFcn(obj, event)
 
     global OneDVisualizeTimeObject;
     
     % Delete timer
     delete(OneDVisualizeTimeObject);
-
-    % Close file
-    fclose(fileID);
 end
