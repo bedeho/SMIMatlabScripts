@@ -14,7 +14,7 @@
 % (numEpochs,numObjects,numTransforms,numOutputsPrTransform)
 % headerSize: bytes read, this is where the file pointer is left
 
-function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID)
+function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(filename)
 
     % Import global variables
     global SOURCE_PLATFORM_USHORT;
@@ -22,7 +22,7 @@ function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loa
     global SOURCE_PLATFORM_FLOAT_SIZE;
 
     % Seek to start of file
-    frewind(fileID);
+    fileID = fopen(filename);
     
     % Read history dimensions & number of regions
     v = fread(fileID, 4, SOURCE_PLATFORM_USHORT);
@@ -78,3 +78,6 @@ function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loa
             end
         end
     end
+    
+    % Close file
+    fclose(fileID);

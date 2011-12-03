@@ -8,14 +8,8 @@
 
 function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
 
-    % Import global variables
-    declareGlobalVars();
-
-    % Open file
-    fileID = fopen();
-    
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID);
+    % Get dimensions
+    [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
     % Fill in missing arguments    
     if nargin < 4,
@@ -30,10 +24,10 @@ function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsIn
         error('Region is to small');
     end
     
-    corr = regionCorrelation(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePositionsInTesting);
-
+    % Compute region correlation
+    corr = regionCorrelation(filename, region, depth, nrOfEyePositionsInTesting);
+    
+    % Plot region correlation
     regionCorrelationPlot = figure();
     imagesc(corr);
     colorbar;
-    
-    fclose(fileID);

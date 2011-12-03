@@ -13,7 +13,7 @@
 %  neuronOffsets: cell array of structs {region}{col,row,depth}.(afferentSynapseCount,offsetCount)
 %  headerSize: bytes read, this is where the file pointer is left
 %
-function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
+function [networkDimensions, neuronOffsets] = loadWeightFileHeader(filename)
 
     % Import global variables
     global SOURCE_PLATFORM_USHORT;
@@ -21,7 +21,7 @@ function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
     global SYNAPSE_ELEMENT_SIZE;
     
     % Seek to start of file
-    frewind(fileID);
+    fileID = fopen(filename);
     
     % Read number of regions
     numRegions = fread(fileID, 1, SOURCE_PLATFORM_USHORT);
@@ -84,3 +84,6 @@ function [networkDimensions, neuronOffsets] = loadWeightFileHeader(fileID)
     if counter ~= nrOfNeurons,
         error('ERROR, unexpected number of neurons');
     end
+    
+    % Close file
+    fclose(fileID);

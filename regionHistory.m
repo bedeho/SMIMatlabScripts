@@ -5,23 +5,18 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  Input=========
-%  fileID: fileID of open weight file
-%  historyDimensions:
-%  neuronOffsets: cell array giving byte offsets (rel. to 'bof') of neurons 
-%  region: neuron region
-%  col: neuron column
-%  row: neuron row
-%  depth: neuron depth
 %  maxEpoch (optional): largest epoch you are interested in
-%  Output========
+%  
 %  Activity history of region/depth: 4-d array (timestep, object, epoch, row, col) 
 
-function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, maxEpoch)
+function [activity] = regionHistory(filename, region, depth, maxEpoch)
 
     % Import global variables
     global SOURCE_PLATFORM_FLOAT;
-
+    
+    % Load header
+    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(filename);
+    
     % Validate input
     validateNeuron('regionHistory.m', networkDimensions, region, depth);
     
@@ -36,6 +31,9 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
     
     y_dimension = networkDimensions(region).y_dimension;
     x_dimension = networkDimensions(region).x_dimension;
+    
+    % Open file
+    fileID = fopen(filename);
     
     % When we are looking for full epoch history, we can get it all in one chunk
     if maxEpoch == historyDimensions.numEpochs,
@@ -69,3 +67,6 @@ function [activity] = regionHistory(fileID, historyDimensions, neuronOffsets, ne
             end
         end
     end
+    
+    % Close file
+    fclose(fileID);

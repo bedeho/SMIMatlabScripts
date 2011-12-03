@@ -6,54 +6,27 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [regionCorrelation] = regionCorrelation(fileID)
+function [regionCorrelation] = regionCorrelation(filename)
 
+    % Get dimensions
+    [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
+    
     % Validate input
     validateNeuron('regionCorrelation.m', networkDimensions, region, depth);
-    
-historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePositionsInTesting
-    
-    numEpochs           = historyDimensions.numEpochs;
-    numObjects          = historyDimensions.numObjects;
-    numOutputsPrObject  = historyDimensions.numOutputsPrObject;
-    y_dimension         = networkDimensions(region).y_dimension;
-    x_dimension         = networkDimensions(region).x_dimension;
-    
-    
-    
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
-        error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
-    end
-    
-    objectsPrEyePosition   = numObjects / nrOfEyePositionsInTesting;
-    
-    % Pre-process data
-    result                 = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, numEpochs);
-    
-    % Get final state of each fixation
-    dataAtLastStepPrObject = squeeze(result(numOutputsPrObject, :, numEpochs, :, :)); % (object, row, col)
-    
-    % Restructure to access data on eye position basis
-    dataPrEyePosition      = reshape(dataAtLastStepPrObject, [objectsPrEyePosition nrOfEyePositionsInTesting y_dimension x_dimension]); % (object, eye_position, row, col)
-    
-    % Zero out error terms
-    floatError = 0.01; % Cutoff for being designated as silent
-    dataPrEyePosition(dataPrEyePosition < floatError) = 0;
-    
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
+    % Setup vars
+    numRegions = length(networkDimensions);
+    y_dimension = networkDimensions(numRegions).y_dimension;
+    x_dimension = networkDimensions(numRegions).x_dimension;
     regionCorrelation = zeros(y_dimension, x_dimension);
     
+    % Load data
+    regionDataPrEyePosition = loadDataPrEyePosition(filename, nrOfEyePositionsInTesting);
+    dataPrEyePosition = regionDataPrEyePosition{numRegions};
+
+    % Compute correlation for each cell
     for row = 1:y_dimension,
         for col = 1:x_dimension,
-            
-            if row == 11 && col == 20,
-                disp 'found it';
-            end
             
             corr = 0;
             
@@ -67,7 +40,7 @@ historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePosit
                 
                     % correlation
                     correlationMatrix = corrcoef(observationMatrix);
-                    c = correlationMatrix(1,2); % pick random nondiagonal element :)
+                    c = correlationMatrix(1,2); % pick one of the two identical non-diagonal element :)
 
                 end
                 

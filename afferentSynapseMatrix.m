@@ -7,10 +7,6 @@
 %
 %  BUILD SYNAPTIC WEIGHT MATRIX FOR A PARTICULAR DEPTH
 %  Input=========
-%  fileID: file id of open file
-%  headerSize: byte size of full header
-%  list: struct array (afferentSynapseCount,offsetCount) of neurons
-%  region: neuron region, V1 = 1
 %  col: neuron column
 %  row: neuron row
 %  depth: neuron depth

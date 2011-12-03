@@ -14,30 +14,25 @@
 
 function plotNetworkHistory(filename, depth, maxEpoch)
 
-    % Import global variables
-    declareGlobalVars();
-
-    % Open file
-    fileID = fopen(filename);
+    % Get dimensions
+    [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID);
+    % Setup vars
+    numRegions = length(networkDimensions);
+    activity = cell(numRegions - 1, 1);
     
     % Fill in missing arguments
     if nargin < 3,
         maxEpoch = historyDimensions.numEpochs;           % pick all epochs
         
         if nargin < 2,
-            depth = 1;                                      % pick top layer by default
+            depth = 1;                                    % pick top layer by default
         end
     end
-
-    numRegions = length(networkDimensions);
-    activity = cell(numRegions - 1, 1);
     
     % Get history array
     for r=2:numRegions,
-        activity{r-1} = regionHistory(fileID, historyDimensions, neuronOffsets, networkDimensions, r, depth, maxEpoch);
+        activity{r-1} = regionHistory(filename, r, depth, maxEpoch);
     end
     
     % Plot
@@ -71,6 +66,4 @@ function plotNetworkHistory(filename, depth, maxEpoch)
             pause
 
         end
-    end 
-   
-    fclose(fileID);
+    end
