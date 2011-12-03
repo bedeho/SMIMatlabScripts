@@ -12,7 +12,7 @@ function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsIn
     declareGlobalVars();
 
     % Open file
-    fileID = fopen(filename);
+    fileID = fopen();
     
     % Read header
     [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID);

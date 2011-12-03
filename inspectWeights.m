@@ -6,7 +6,7 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function inspectResponse(folder, networkFile, nrOfEyePositionsInTesting)
+function inspectWeights(folder, networkFile, nrOfEyePositionsInTesting)
 
     % Import global variables
     declareGlobalVars();

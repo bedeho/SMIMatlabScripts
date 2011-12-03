@@ -5,17 +5,6 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  Input=========
-%  fileID: fileID of open weight file
-%  networkDimensions: 
-%  historyDimensions: 
-%  neuronOffsets: cell array giving byte offsets (rel. to 'bof') of neurons 
-%  region: neuron region
-%  col: neuron column
-%  row: neuron row
-%  depth: neuron depth
-%  maxEpoch (optional): largest epoch you are interested in
-%  Output========
 %  Activity history of region: 3-d matrix (timestep, object, epoch)
 
 function [activity] = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch)

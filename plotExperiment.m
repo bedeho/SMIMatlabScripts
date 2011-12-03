@@ -100,7 +100,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                 
                 figCommand                  = ['matlab:open(\''' netDir '/result_1.fig\'')'];
                 fig2Command                 = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
-                inspectorCommand            = ['matlab:inspector(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
+                inspectorCommand            = ['matlab:inspectResponse(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
                 firingCommand               = ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')'];
                 activationCommand           = ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')'];
                 inhibitedActivationCommand  = ['matlab:plotNetworkHistory(\''' netDir '/inhibitedActivation.dat\'')'];

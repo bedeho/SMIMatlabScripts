@@ -6,18 +6,23 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [regionCorrelation] = regionCorrelation(fileID, historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePositionsInTesting)
+function [regionCorrelation] = regionCorrelation(fileID)
 
     % Validate input
     validateNeuron('regionCorrelation.m', networkDimensions, region, depth);
     
-
+historyDimensions, neuronOffsets, networkDimensions, region, depth, nrOfEyePositionsInTesting
     
     numEpochs           = historyDimensions.numEpochs;
     numObjects          = historyDimensions.numObjects;
     numOutputsPrObject  = historyDimensions.numOutputsPrObject;
     y_dimension         = networkDimensions(region).y_dimension;
     x_dimension         = networkDimensions(region).x_dimension;
+    
+    
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
         error(['The number of "objects" is not divisible by nrOfEyePositionsInTesting: o=' num2str(numObjects) ', neps=' num2str(nrOfEyePositionsInTesting)]);
