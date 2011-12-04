@@ -46,7 +46,7 @@ function [summary] = plotSimulation(experiment, simulation, nrOfEyePositionsInTe
             
             % Save results for summary
             summary(counter).directory = directory;
-            summary(counter).nrOfHeadCenteredCells =  nnz(regionCorrelation > 0); % Count number of cells with positive correlation
+            summary(counter).nrOfHeadCenteredCells = nnz(regionCorrelation{end} > 0); % Count number of cells with positive correlation
             
             %summary(counter).fullInvariance = fullInvariance;
             %summary(counter).meanInvariance = meanInvariance;

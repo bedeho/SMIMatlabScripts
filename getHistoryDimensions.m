@@ -8,11 +8,5 @@
 
 function [networkDimensions, historyDimensions] = getHistoryDimensions(filename)
 
-    % Open file
-    fileID = fopen(filename);
-    
     % Read header
-    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(fileID);
-    
-    % Close file
-    fclose(fileID);
+    [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(filename);

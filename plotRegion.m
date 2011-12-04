@@ -25,7 +25,7 @@ function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsIn
     end
     
     % Compute region correlation
-    corr = regionCorrelation(filename, region, depth, nrOfEyePositionsInTesting);
+    corr = regionCorrelation(filename, nrOfEyePositionsInTesting);
     
     % Plot region correlation
     regionCorrelationPlot = figure();

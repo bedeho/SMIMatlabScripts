@@ -7,7 +7,7 @@
 %
 %  Result: (object, eye_position, row, col, region)
 
-function [regionDataPrEyePosition, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting)
+function [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting)
 
 
     % Get dimensions
@@ -27,7 +27,7 @@ function [regionDataPrEyePosition, objectsPrEyePosition] = regionDataPrEyePositi
     end
     
     % Allocate space
-    regionDataPrEyePosition = cell{numRegions-1,1};
+    data = cell(numRegions-1,1);
         
     % Iterate regions
     for r = 2:numRegions,
@@ -35,9 +35,7 @@ function [regionDataPrEyePosition, objectsPrEyePosition] = regionDataPrEyePositi
         % Get dimensions for this region
         y_dimension = networkDimensions(r).y_dimension;
         x_dimension = networkDimensions(r).x_dimension;
-
         
-
         % Pre-process data
         result = regionHistory(filename, r, depth, numEpochs);
 
@@ -52,7 +50,7 @@ function [regionDataPrEyePosition, objectsPrEyePosition] = regionDataPrEyePositi
         dataPrEyePosition(dataPrEyePosition < floatError) = 0;
         
         % Save in cell array
-        regionDataPrEyePosition{r-1,1} = dataPrEyePosition;
+        data{r-1,1} = dataPrEyePosition;
         
     end
    

@@ -6,25 +6,25 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [regionCorrelation] = regionCorrelation(filename, region)
+function [regionCorrelation] = regionCorrelation(filename, nrOfEyePositionsInTesting)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
     % Load data
-    [regionDataPrEyePosition, objectsPrEyePosition] = loadDataPrEyePosition(filename, nrOfEyePositionsInTesting);
+    [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting);
     
     % Setup vars
     numRegions = length(networkDimensions);
-    regionCorrelation = cell(numRegions-1);
+    regionCorrelation = cell(numRegions-1,1);
     
     % Compute correlation for each region
     for r=2:numRegions,
         
-        dataPrEyePosition = regionDataPrEyePosition{r};
+        dataPrEyePosition = data{r-1,1};
         
-        y_dimension = networkDimensions(region).y_dimension;
-        x_dimension = networkDimensions(region).x_dimension;
+        y_dimension = networkDimensions(r).y_dimension;
+        x_dimension = networkDimensions(r).x_dimension;
         regionCorrelation{r-1} = zeros(y_dimension, x_dimension);
         
         % Compute correlation for each cell

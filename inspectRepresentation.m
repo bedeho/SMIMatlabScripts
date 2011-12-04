@@ -12,17 +12,23 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
     % Load data
-    [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting); % (object, eye_position, row, col, region)
+    [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting); % {region}(object, eye_position, row, col, region)
     
     % Setup vars
     numRegions = length(networkDimensions);
 
     % Setup activity plot
     fig = figure();
-    subplot(numRegions, 1, 1);
-    v1 = permute(data, [3 4 5 1 2]); % expose the last three dimensions to be summed away
-    v2 = sum(sum(sum(v1)));          % sum over all neurons in all regions
-    im = imagesc(v2);
+    clickAxis = subplot(numRegions, 1, 1);
+    
+    total = zeros(objectsPrEyePosition, nrOfEyePositionsInTesting);
+    for r=1:(numRegions-1),
+        v1 = permute(data{r}, [3 4 1 2]); % expose the last two dimensions to be summed away
+        v2 = squeeze(sum(sum(v1)));          % sum over all neurons in all regions
+        total = total + v2;
+    end
+    
+    im = imagesc(total);
     colorbar;
         
     % Setup callback
@@ -39,18 +45,18 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
     function responseCallBack(varargin)
         
         % Extract row,col
-        pos = get(axisVals(region-1, 2), 'CurrentPoint');
-        [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
+        pos = get(clickAxis, 'CurrentPoint');
+        [row, col] = imagescClick(pos(1, 2), pos(1, 1), objectsPrEyePosition, nrOfEyePositionsInTesting);
 
-        disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
-        disp(['You clicked R:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)]);
+        disp(['You clicked R:' num2str(nan) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
+        disp(['You clicked R:' num2str(nan) ', row:' num2str(row) ', col:', num2str(col)]);
         
         % Iterate regions to do response plot
         for r=2:numRegions,
             subplot(numRegions, 1, r);
             
-            imagesc(data(row, col, :, :, r));
-            
+            imagesc(squeeze(data{r-1}(row, col, :, :)));
+            colorbar
             hold;
         end
     end

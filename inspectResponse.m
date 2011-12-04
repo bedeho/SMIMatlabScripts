@@ -13,7 +13,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
     
     % Load data
     [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting);
-    regionCorrs = regionCorrelation(filename);
+    regionCorrs = regionCorrelation(filename, nrOfEyePositionsInTesting);
     
     % Setup vars
     numRegions = length(networkDimensions);
@@ -41,7 +41,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         % Extract region,row,col
         region = varargin{3};
 
-        pos = get(axisVals(region-1, 2), 'CurrentPoint');
+        pos = get(axisVals(region-1), 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);

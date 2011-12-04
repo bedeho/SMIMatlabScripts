@@ -28,7 +28,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
         simulation = listing(d).name;
 
         if listing(d).isdir && ~any(strcmp(simulation, {'Filtered', 'Images', '.', '..'})),
-            [parameters, nrOfParams] = getParameters(listing(d).name);
+            [parameters, nrOfParams] = getParameters(simulation);
             break;
         end
     end
@@ -98,42 +98,42 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                 fprintf(fileID, '<tr>');
                 
                     % Name
-                    fprintf(fileID, '<td> %s </td>', simulation);
+                    fprintf(fileID, '<td> %s </td>\n', simulation);
                     
                     % Network
-                    fprintf(fileID, '<td> %s </td>', summary(s).directory);
+                    fprintf(fileID, '<td> %s </td>\n', summary(s).directory);
                     
                     % Result
-                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>', [netDir '/result_1.png']);
+                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/result_1.png']);
                      
                     % Parameters
                     parameters = getParameters(simulation);
                     
                     for p = 1:nrOfParams,
-                        fprintf(fileID, ['<td> ' parameters{p,2} ' </td>']);
+                        fprintf(fileID, ['<td> ' parameters{p,2} ' </td>\n']);
                     end
                     
                     if summary(s).nrOfHeadCenteredCells > 0,
-                        fprintf(fileID, '<td style=''background-color:green;''> %d </td>', summary(s).nrOfHeadCenteredCells);
+                        fprintf(fileID, '<td style=''background-color:green;''> %d </td>\n', summary(s).nrOfHeadCenteredCells);
                     else    
-                        fprintf(fileID, '<td> %d </td>', summary(s).nrOfHeadCenteredCells);
+                        fprintf(fileID, '<td> %d </td>\n', summary(s).nrOfHeadCenteredCells);
                     end
                         
                     % Action
-                    fprintf(fileID, '<td>');
-                    outputButton('Figure', ['matlab:open(\''' netDir '/result_1.fig\'')']);
-                    outputButton('Response', ['matlab:inspectResponse(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']);
-                    outputButton('Weights', ['matlab:inspectWeight(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']);
-                    outputButton('Representation', ['matlab:inspectRepresentation(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']); 
-                    outputButton('Firing', ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')']); 
-                    outputButton('Activation', ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')']);
-                    outputButton('IActivation', ['matlab:plotNetworkHistory(\''' netDir '/inhibitedActivation.dat\'')']);
-                    outputButton('Trace', ['matlab:plotNetworkHistory(\''' netDir '/trace.dat\'')']);
+                    fprintf(fileID, '<td>\n');
+                    outputButton('Figure', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
+                    outputButton('Response', ['matlab:inspectResponse(\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']);
+                    outputButton('Weights', ['matlab:inspectWeights(\\''' netDir '/' summary(s).directory '.txt\\'',\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']);
+                    outputButton('Representation', ['matlab:inspectRepresentation(\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']); 
+                    outputButton('Firing', ['matlab:plotNetworkHistory(\\''' netDir '/firingRate.dat\\'')']); 
+                    outputButton('Activation', ['matlab:plotNetworkHistory(\\''' netDir '/activation.dat\\'')']);
+                    outputButton('IActivation', ['matlab:plotNetworkHistory(\\''' netDir '/inhibitedActivation.dat\\'')']);
+                    outputButton('Trace', ['matlab:plotNetworkHistory(\\''' netDir '/trace.dat\\'')']);
                     fprintf(fileID, '</td>');
                     
                     % Network name: summary(s).directory '.txt\''
                 
-                fprintf(fileID, '</tr>\n');
+                fprintf(fileID, '</tr>\n\n');
             end
             
         end
@@ -151,7 +151,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     system('stty echo');
     
     function outputButton(title, action)
-        fprintf(fileID, ['<input type="button" value="' title '" onclick="document.location=\''' action '\''"/></br>']);
+        fprintf(fileID, ['<input type="button" value="' title '" onclick="document.location=''' action '''"/></br>\n']);
     end
 
 end
