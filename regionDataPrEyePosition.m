@@ -1,5 +1,5 @@
 %
-%  loadDataPrEyePosition.m
+%  regionDataPrEyePosition.m
 %  SMI
 %
 %  Created by Bedeho Mender on 29/04/11.
@@ -7,18 +7,19 @@
 %
 %  Result: (object, eye_position, row, col, region)
 
-function [regionDataPrEyePosition] = loadDataPrEyePosition(filename, nrOfEyePositionsInTesting)
+function [regionDataPrEyePosition, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting)
 
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
     % Setup vars
-    depth               = 1;
-    numRegions          = length(networkDimensions);
-    numEpochs           = historyDimensions.numEpochs;
-    numObjects          = historyDimensions.numObjects;
-    numOutputsPrObject  = historyDimensions.numOutputsPrObject;
+    depth                = 1;
+    numRegions           = length(networkDimensions);
+    numEpochs            = historyDimensions.numEpochs;
+    numObjects           = historyDimensions.numObjects;
+    numOutputsPrObject   = historyDimensions.numOutputsPrObject;
+    objectsPrEyePosition = numObjects / nrOfEyePositionsInTesting;
     
     % Check for compatibility
     if mod(numObjects, nrOfEyePositionsInTesting) ~= 0,
@@ -35,7 +36,7 @@ function [regionDataPrEyePosition] = loadDataPrEyePosition(filename, nrOfEyePosi
         y_dimension = networkDimensions(r).y_dimension;
         x_dimension = networkDimensions(r).x_dimension;
 
-        objectsPrEyePosition = numObjects / nrOfEyePositionsInTesting;
+        
 
         % Pre-process data
         result = regionHistory(filename, r, depth, numEpochs);

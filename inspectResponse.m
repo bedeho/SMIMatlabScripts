@@ -8,43 +8,30 @@
 
 function inspectResponse(filename, nrOfEyePositionsInTesting)
 
-
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
+    % Load data
+    [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting);
+    regionCorrs = regionCorrelation(filename);
+    
     % Setup vars
     numRegions = length(networkDimensions);
+    axisVals = zeros(numRegions-1, 1); % Save axis that we can lookup 'CurrentPoint' property on callback
     
-    % Allocate datastructure
-    regionCorrs = cell(numRegions - 1);
-    axisVals = zeros(numRegions, 1);
-    
-    % Load data
-    regionDataPrEyePosition = loadDataPrEyePosition(filename, nrOfEyePositionsInTesting);
-    dataPrEyePosition = regionDataPrEyePosition{numRegions};
-    
-    % Iterate regions to
-    % 1) Do initial plots
-    % 2) Setup callbacks for mouse clicks
+    % Iterate regions to do correlation plot and setup callbacks
     fig = figure();
     for r=2:numRegions,
-        
-        % Compute and save correlation
-        [regionCorrelation] = regionCorrelation(filename);
-        regionCorrs{r-1} = corr;
         
         % Save axis
         axisVals(r-1) = subplot(numRegions, 1, r-1);
         
-        im = imagesc(corr);
+        im = imagesc(regionCorrs{r-1});
         colorbar
                 
         % Setup callback
         set(im, 'ButtonDownFcn', {@responseCallBack, r});
     end
-    
-    % Setup blank plot
-    axisVals(numRegions) = subplot(numRegions, 1, numRegions);
     
     makeFigureFullScreen(fig);
     
@@ -54,16 +41,11 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         % Extract region,row,col
         region = varargin{3};
 
-        pos=get(axisVals(region-1, 2), 'CurrentPoint');
+        pos = get(axisVals(region-1, 2), 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
         disp(['You clicked R:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)]);
-
-        updateCellReponsePlot(region, row, col);
-    end
-
-    function updateCellReponsePlot(region, row, col)
 
         % Setup blank plot
         axisVals(numRegions) = subplot(numRegions, 1, numRegions);
@@ -76,7 +58,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         for e= 1:nrOfEyePositionsInTesting,
             
-            v = dataPrEyePosition(:, e, row, col);
+            v = data{region-1}(:, e, row, col);
             
             if max(v) > m,
                 m = max(v);
@@ -96,15 +78,14 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         %}
         
         % Bar plot
-        bar(dataPrEyePosition(:, :, row, col));
+        bar(data{region-1}(:, :, row, col));
         
         % Dump correlation
-        regionCorrs{r-1}(row,col)
+        regionCorrs{region-1}(row,col)
         
         set(gca,'XLim',[1 objectsPrEyePosition])
         set(gca,'XTick', 1:objectsPrEyePosition)
         %set(gca,'XTickLabel',['0';' ';'1';' ';'2';' ';'3';' ';'4'])
-        
         
         hold;
     end

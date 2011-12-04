@@ -94,16 +94,6 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                 
                 netDir = [experimentFolder  simulation '/' summary(s).directory];
                 
-                figCommand                  = ['matlab:open(\''' netDir '/result_1.fig\'')'];
-                %fig2Command                = ['matlab:open(\''' netDir '/sparsityPercentileValue.fig\'')'];
-                inspectResponseCommand      = ['matlab:inspectResponse(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
-                inspectWeightCommand        = ['matlab:inspectWeight(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
-                inspectRepresentationCommand= ['matlab:inspectRepresentation(\''' netDir '\'',\''' summary(s).directory '.txt\'',' num2str(nrOfEyePositionsInTesting) ')'];
-                firingCommand               = ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')'];
-                activationCommand           = ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')'];
-                inhibitedActivationCommand  = ['matlab:plotNetworkHistory(\''' netDir '/inhibitedActivation.dat\'')'];
-                traceCommand                = ['matlab:plotNetworkHistory(\''' netDir '/trace.dat\'')'];
-                
                 % Start row
                 fprintf(fileID, '<tr>');
                 
@@ -131,16 +121,17 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                         
                     % Action
                     fprintf(fileID, '<td>');
-                    fprintf(fileID, '<input type="button" value="Figure" onclick="document.location=''%s''"/></br>', figCommand);
-                    fprintf(fileID, '<input type="button" value="Response" onclick="document.location=''%s''"/></br>', inspectResponseCommand);
-                    fprintf(fileID, '<input type="button" value="Weights" onclick="document.location=''%s''"/></br>', inspectWeightCommand);
-                    fprintf(fileID, '<input type="button" value="Representation" onclick="document.location=''%s''"/></br>', inspectRepresentationCommand);
-                    fprintf(fileID, '<input type="button" value="Firing" onclick="document.location=''%s''"/></br>', firingCommand);
-                    fprintf(fileID, '<input type="button" value="Activation" onclick="document.location=''%s''"/></br>', activationCommand);
-                    %fprintf(fileID, '<input type="button" value="IActivation" onclick="document.location=''%s''"/></br>', inhibitedActivationCommand);
-                    %fprintf(fileID, '<input type="button" value="Trace" onclick="document.location=''%s''"/></br>', traceCommand);
-                    %fprintf(fileID, '<input type="button" value="Percentile" onclick="document.location=''%s''"/></br>', fig2Command);
+                    outputButton('Figure', ['matlab:open(\''' netDir '/result_1.fig\'')']);
+                    outputButton('Response', ['matlab:inspectResponse(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']);
+                    outputButton('Weights', ['matlab:inspectWeight(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']);
+                    outputButton('Representation', ['matlab:inspectRepresentation(\''' netDir '\firingRate.dat\'',' num2str(nrOfEyePositionsInTesting) ')']); 
+                    outputButton('Firing', ['matlab:plotNetworkHistory(\''' netDir '/firingRate.dat\'')']); 
+                    outputButton('Activation', ['matlab:plotNetworkHistory(\''' netDir '/activation.dat\'')']);
+                    outputButton('IActivation', ['matlab:plotNetworkHistory(\''' netDir '/inhibitedActivation.dat\'')']);
+                    outputButton('Trace', ['matlab:plotNetworkHistory(\''' netDir '/trace.dat\'')']);
                     fprintf(fileID, '</td>');
+                    
+                    % Network name: summary(s).directory '.txt\''
                 
                 fprintf(fileID, '</tr>\n');
             end
@@ -159,19 +150,25 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     disp('DONE...');
     system('stty echo');
     
+    function outputButton(title, action)
+        fprintf(fileID, ['<input type="button" value="' title '" onclick="document.location=\''' action '\''"/></br>']);
+    end
+
+end
     
-    function [parameters, nrOfParams] = getParameters(experiment)
-        
-        % Get a sample simulation name
-        columns = strsplit(experiment, '_');
-        nrOfParams = length(columns) - 1;
-        
-        parameters = cell(nrOfParams,2);
-        
-        for p = 1:nrOfParams,
-            pair = strsplit(char(columns(p)),'='); % columns(p) is a 1x1 cell
-            parameters{p,1} = char(pair(1));
-            parameters{p,2} = char(pair(2));
-        end
-    
+
+function [parameters, nrOfParams] = getParameters(experiment)
+
+    % Get a sample simulation name
+    columns = strsplit(experiment, '_');
+    nrOfParams = length(columns) - 1;
+
+    parameters = cell(nrOfParams,2);
+
+    for p = 1:nrOfParams,
+        pair = strsplit(char(columns(p)),'='); % columns(p) is a 1x1 cell
+        parameters{p,1} = char(pair(1));
+        parameters{p,2} = char(pair(2));
+    end
+end
     
