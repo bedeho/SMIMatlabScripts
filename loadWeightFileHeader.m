@@ -5,14 +5,16 @@
 %  Created by Bedeho Mender on 29/04/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  LOAD HEADER OF WEIGHT FILE
-%  Input=========
-%  fileID: Id of open file
-%  Output========
-%  networkDimensions: struct array (dimension,depth) of regions (incl. V1)
-%  neuronOffsets: cell array of structs {region}{col,row,depth}.(afferentSynapseCount,offsetCount)
-%  headerSize: bytes read, this is where the file pointer is left
+%  Purpose: 
+%  * Load header of weight file
+%  Input:
+%  * filname
+%  Output:
+%  *networkDimensions: struct array (dimension,depth) of regions (incl. V1)
+%  *historyDimensions: struct (numEpochs,numObjects,numTransforms,numOutputsPrTransform)
+%  *headerSize: bytes read, this is where the file pointer is left
 %
+
 function [networkDimensions, neuronOffsets] = loadWeightFileHeader(filename)
 
     % Import global variables

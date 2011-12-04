@@ -29,5 +29,5 @@ function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsIn
     
     % Plot region correlation
     regionCorrelationPlot = figure();
-    imagesc(corr);
+    imagesc(corr{region-1});
     colorbar;

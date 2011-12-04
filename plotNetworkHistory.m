@@ -5,12 +5,6 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-% Input=========
-% filename: filename of weight file
-% depth: 
-% maxEpoch (optional): last epoch to plot
-% Output========
-% Plots one 2d activity plot of network pr. output
 
 function plotNetworkHistory(filename, depth, maxEpoch)
 

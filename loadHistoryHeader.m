@@ -1,18 +1,18 @@
 %
-% loadHistoryHeader.m
-% SMI
+%  loadHistoryHeader.m
+%  SMI
 %
-% Created by Bedeho Mender on 15/11/11.
-% Copyright 2011 OFTNAI. All rights reserved.
+%  Created by Bedeho Mender on 15/11/11.
+%  Copyright 2011 OFTNAI. All rights reserved.
 %
-% LOAD HEADER OF HISTORY FILE
-% Input=========
-% fileID: Id of open file
-% Output========
-% networkDimensions: struct array (dimension,depth) of regions (incl. V1)
-% historyDimensions: struct
-% (numEpochs,numObjects,numTransforms,numOutputsPrTransform)
-% headerSize: bytes read, this is where the file pointer is left
+%  Purpose: 
+%  * Load header of history file
+%  Input:
+%  * filname
+%  Output:
+%  *networkDimensions: struct array (dimension,depth) of regions (incl. V1)
+%  *historyDimensions: struct (numEpochs,numObjects,numTransforms,numOutputsPrTransform)
+%  *headerSize: bytes read, this is where the file pointer is left
 
 function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(filename)
 
