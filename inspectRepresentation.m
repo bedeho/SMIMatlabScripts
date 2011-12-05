@@ -50,6 +50,9 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
         pos = get(clickAxis, 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), objectsPrEyePosition, nrOfEyePositionsInTesting);
         
+        % Response count
+        disp(['# responding: ' num2str(total(row,col))]);
+        
         % Iterate regions to do response plot
         for r=2:numRegions,
             subplot(numRegions, 1, r);
@@ -57,8 +60,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
             cla
             imagesc(m > 0);
             colorbar
-            title('Layer respons');
-            hold;
+            title('Layer response');
         end
     end
 end

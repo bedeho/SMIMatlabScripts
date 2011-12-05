@@ -43,6 +43,9 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         pos = get(clickAxis, 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(2).y_dimension, networkDimensions(2).x_dimension);
         
+        % Response count
+        disp(['# responding: ' num2str(v2(row,col))]);
+        
         % Plot the two input layers
         subplot(3, 1, 2);
         weightBox1 = afferentSynapseMatrix(fileID, networkDimensions, neuronOffsets, 2, 1, row, col, 1, 1);
@@ -51,7 +54,6 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         dim = size(weightBox1);
         daspect([dim 1]);
         colorbar;
-        hold;
         
         subplot(3, 1, 3);
         weightBox2 = afferentSynapseMatrix(fileID, networkDimensions, neuronOffsets, 2, 1, row, col, 1, 2);
@@ -59,7 +61,6 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         imagesc(weightBox2);
         daspect([dim 1]);
         colorbar;
-        hold;
     end
 end
 

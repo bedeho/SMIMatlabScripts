@@ -14,12 +14,12 @@ function [row, col] = imagescClick(i, j, y_dimension, x_dimension)
     
     % For some reason on the maximal border of imagesc, one can get to
     % N.5201, while 0.5 is the maximum for all i < N.
-    if row > x_dimension,
-        row = x_dimension;
+    if row > y_dimension,
+        row = y_dimension;
     end
     
-    if col > y_dimension,
-        col = y_dimension;
+    if col > x_dimension,
+        col = x_dimension;
     end
 
     disp(['(' num2str(i) ',' num2str(j) ') => (' num2str(row) ',' num2str(col) ')']);
