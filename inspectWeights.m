@@ -20,6 +20,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
     im = imagesc(v2); % only do first region
     daspect([size(v2) 1]);
     colorbar;
+    title('Number of testing locations responded to');
         
     % Setup callback
     set(im, 'ButtonDownFcn', {@responseCallBack});
@@ -59,28 +60,4 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         hold;
     end
 end
-
-% Made with random experiemtnation with imagesc behavior, MAY not work
-% in other settings because of border BS, check it out later, use
-% ginput() if possible 
-function [row, col] = imagescClick(i, j, y_dimension, x_dimension)
-
-    if i < 1
-        row = 1;
-    else
-        row = floor(i);
-    end
-
-    if j < 0.5
-        col = 1;
-    else
-        col = round(j);
-
-        if col > x_dimension,
-            col = x_dimension;
-        end
-    end
-end
-
-
 

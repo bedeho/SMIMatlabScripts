@@ -17,6 +17,8 @@
 function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loadHistoryHeader(filename)
 
     % Import global variables
+    declareGlobalVars();
+    
     global SOURCE_PLATFORM_USHORT;
     global SOURCE_PLATFORM_USHORT_SIZE;
     global SOURCE_PLATFORM_FLOAT_SIZE;

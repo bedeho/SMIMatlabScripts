@@ -28,6 +28,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         im = imagesc(regionCorrs{r-1});
         colorbar
+        title('Head centerede correlation');
                 
         % Setup callback
         set(im, 'ButtonDownFcn', {@responseCallBack, r});
@@ -45,7 +46,8 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
-        disp(['You clicked R:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)]);
+        str = [' region:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)];
+        disp(['You clicked ' str]);
 
         % Setup blank plot
         axisVals(numRegions) = subplot(numRegions, 1, numRegions);
@@ -86,30 +88,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         set(gca,'XLim',[1 objectsPrEyePosition])
         set(gca,'XTick', 1:objectsPrEyePosition)
         %set(gca,'XTickLabel',['0';' ';'1';' ';'2';' ';'3';' ';'4'])
-        
+        title(['Response for ' str]);
         hold;
     end
 end
-
-% Made with random experiemtnation with imagesc behavior, MAY not work
-% in other settings because of border BS, check it out later, use
-% ginput() if possible 
-function [row, col] = imagescClick(i, j, y_dimension, x_dimension)
-
-    if i < 1
-        row = 1;
-    else
-        row = floor(i);
-    end
-
-    if j < 0.5
-        col = 1;
-    else
-        col = round(j);
-
-        if col > x_dimension,
-            col = x_dimension;
-        end
-    end
-end
-

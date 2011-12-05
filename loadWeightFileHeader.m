@@ -12,17 +12,18 @@
 %  Output:
 %  *networkDimensions: struct array (dimension,depth) of regions (incl. V1)
 %  *historyDimensions: struct (numEpochs,numObjects,numTransforms,numOutputsPrTransform)
-%  *headerSize: bytes read, this is where the file pointer is left
 %
 
 function [networkDimensions, neuronOffsets] = loadWeightFileHeader(filename)
 
     % Import global variables
+    declareGlobalVars();
+    
     global SOURCE_PLATFORM_USHORT;
     global SOURCE_PLATFORM_USHORT_SIZE;
     global SYNAPSE_ELEMENT_SIZE;
     
-    % Seek to start of file
+    % Open file
     fileID = fopen(filename);
     
     % Read number of regions
