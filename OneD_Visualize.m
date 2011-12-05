@@ -20,7 +20,7 @@ function OneD_Visualize(stimuliName)
     fileCounter = 1;
     
     % Parameters
-    playAtPrcntOfOriginalSpeed = 0.5;
+    playAtPrcntOfOriginalSpeed = 1.0;
     
     % Load file
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);

@@ -7,11 +7,7 @@
 %
 
 function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
-    
-    % Import global variables
-    declareGlobalVars();
-    global floatError;
-    
+        
     % Load data
     [networkDimensions, neuronOffsets] = loadWeightFileHeader(networkFile); % Load weight file header
     [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting); % (object, eye_position, row, col, region)
@@ -20,7 +16,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
     fig = figure();
     clickAxis = subplot(3, 1, 1);
     v0 = data{end};
-    v0(v0 > floatError) = 1;  % zero out error terms, and only count non error terms as 1.
+    v0(v0 > 0) = 1;  % count all nonzero as 1, error terms have already been removed
     v1 = squeeze(sum(sum(v0))); % sum away
     v2 = v1(:,:,1);
     im = imagesc(v2);         % only do first region
@@ -50,6 +46,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         % Plot the two input layers
         subplot(3, 1, 2);
         weightBox1 = afferentSynapseMatrix(fileID, networkDimensions, neuronOffsets, 2, 1, row, col, 1, 1);
+        cla
         imagesc(weightBox1);
         dim = size(weightBox1);
         daspect([dim 1]);
@@ -58,6 +55,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         
         subplot(3, 1, 3);
         weightBox2 = afferentSynapseMatrix(fileID, networkDimensions, neuronOffsets, 2, 1, row, col, 1, 2);
+        cla
         imagesc(weightBox2);
         daspect([dim 1]);
         colorbar;

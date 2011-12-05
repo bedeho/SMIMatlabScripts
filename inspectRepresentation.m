@@ -8,10 +8,6 @@
 
 function inspectRepresentation(filename, nrOfEyePositionsInTesting)
 
-    % Import global variables
-    declareGlobalVars();
-    global floatError;
-    
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
@@ -28,7 +24,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
     total = zeros(objectsPrEyePosition, nrOfEyePositionsInTesting);
     for r=1:(numRegions-1),
         v1 = permute(data{r}, [3 4 1 2]); % expose the last two dimensions to be summed away
-        v1(v1 > floatError) = 1;          % zero out error terms, and only count non error terms as 1.
+        v1(v1 > 0) = 1;                   % count nonzero response as 1, all error terms have previously been removed
         v2 = squeeze(sum(sum(v1)));       % sum over all neurons in all regions
         total = total + v2;
     end
@@ -57,8 +53,9 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
         % Iterate regions to do response plot
         for r=2:numRegions,
             subplot(numRegions, 1, r);
-            
-            imagesc(squeeze(data{r-1}(row, col, :, :)));
+            m = squeeze(data{r-1}(row, col, :, :));
+            cla
+            imagesc(m > 0);
             colorbar
             title('Layer respons');
             hold;

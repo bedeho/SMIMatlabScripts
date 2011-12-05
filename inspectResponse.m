@@ -76,6 +76,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         %}
         
         % Bar plot
+        cla
         bar(data{region-1}(:, :, row, col));
         
         % Dump correlation
@@ -85,6 +86,5 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         set(gca,'XTick', 1:objectsPrEyePosition)
         %set(gca,'XTickLabel',['0';' ';'1';' ';'2';' ';'3';' ';'4'])
         title(['Row:' num2str(row) ', Col:' num2str(col)]); % ', R:' num2str(region)
-        hold;
     end
 end
