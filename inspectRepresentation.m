@@ -8,6 +8,10 @@
 
 function inspectRepresentation(filename, nrOfEyePositionsInTesting)
 
+    % Import global variables
+    declareGlobalVars();
+    global floatError;
+    
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
@@ -24,12 +28,14 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
     total = zeros(objectsPrEyePosition, nrOfEyePositionsInTesting);
     for r=1:(numRegions-1),
         v1 = permute(data{r}, [3 4 1 2]); % expose the last two dimensions to be summed away
-        v2 = squeeze(sum(sum(v1)));          % sum over all neurons in all regions
+        v1(v1 > floatError) = 1;          % zero out error terms, and only count non error terms as 1.
+        v2 = squeeze(sum(sum(v1)));       % sum over all neurons in all regions
         total = total + v2;
     end
     
     im = imagesc(total);
     colorbar;
+    title('# responding cells per testing location');
         
     % Setup callback
     set(im, 'ButtonDownFcn', {@responseCallBack});
@@ -39,7 +45,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
         subplot(numRegions, 1, r);
     end
     
-    makeFigureFullScreen(fig);
+    %makeFigureFullScreen(fig);
     
     % Callback
     function responseCallBack(varargin)
@@ -47,9 +53,6 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
         % Extract row,col
         pos = get(clickAxis, 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), objectsPrEyePosition, nrOfEyePositionsInTesting);
-
-        disp(['You clicked R:' num2str(nan) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
-        disp(['You clicked R:' num2str(nan) ', row:' num2str(row) ', col:', num2str(col)]);
         
         % Iterate regions to do response plot
         for r=2:numRegions,
@@ -57,6 +60,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
             
             imagesc(squeeze(data{r-1}(row, col, :, :)));
             colorbar
+            title('Layer respons');
             hold;
         end
     end

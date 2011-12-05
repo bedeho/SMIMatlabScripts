@@ -34,7 +34,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         set(im, 'ButtonDownFcn', {@responseCallBack, r});
     end
     
-    makeFigureFullScreen(fig);
+    %makeFigureFullScreen(fig);
     
     % Callback
     function responseCallBack(varargin)
@@ -44,10 +44,6 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
 
         pos = get(axisVals(region-1), 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
-
-        disp(['You clicked R:' num2str(region) ', row:' num2str(pos(1, 2)) ', col:', num2str(pos(1, 1))]);
-        str = [' region:' num2str(region) ', row:' num2str(row) ', col:', num2str(col)];
-        disp(['You clicked ' str]);
 
         % Setup blank plot
         axisVals(numRegions) = subplot(numRegions, 1, numRegions);
@@ -88,7 +84,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         set(gca,'XLim',[1 objectsPrEyePosition])
         set(gca,'XTick', 1:objectsPrEyePosition)
         %set(gca,'XTickLabel',['0';' ';'1';' ';'2';' ';'3';' ';'4'])
-        title(['Response for ' str]);
+        title(['Row:' num2str(row) ', Col:' num2str(col)]); % ', R:' num2str(region)
         hold;
     end
 end

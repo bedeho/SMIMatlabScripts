@@ -9,6 +9,9 @@
 
 function [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting)
 
+    % Import global variables
+    declareGlobalVars();
+    global floatError;
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
@@ -46,8 +49,7 @@ function [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEy
         dataPrEyePosition = reshape(dataAtLastStepPrObject, [objectsPrEyePosition nrOfEyePositionsInTesting y_dimension x_dimension]); % (object, eye_position, row, col)
 
         % Zero out error terms
-        floatError = 0.01; % Cutoff for being designated as silent
-        dataPrEyePosition(dataPrEyePosition < floatError) = 0;
+        dataPrEyePosition(dataPrEyePosition < floatError) = 0; % Cutoff for being designated as silent
         
         % Save in cell array
         data{r-1,1} = dataPrEyePosition;
