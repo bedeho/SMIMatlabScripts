@@ -88,21 +88,21 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     function draw()
         
         % not in the matlab spirit, but I could not figure it out
-        for i = 1:nrOfEyePositionPrefrerence,
+        for i = 1:nrOfVisualPreferences,
             
-            e = eyePositionPreferences(i);
-            
-            for j = 1:nrOfVisualPreferences,
-                
-                v = visualPreferences(j);
+            v = visualPreferences((nrOfVisualPreferences + 1) - i); % flip it so that the top row prefers the right most retinal loc.
 
+            for j = 1:nrOfEyePositionPrefrerence,
+                
+                e = eyePositionPreferences(j);
+                
                 % visual component
-                sigmoidPositive(j,i) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
-                sigmoidNegative(j,i) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
+                sigmoidPositive(i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
+                sigmoidNegative(i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
                 
                 % eye modulation
-                sigmoidPositive(j,i) = sigmoidPositive(j,i) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
-                sigmoidNegative(j,i) = sigmoidNegative(j,i) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
+                sigmoidPositive(i,j) = sigmoidPositive(i,j) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
+                sigmoidNegative(i,j) = sigmoidNegative(i,j) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
                 
             end
         end
@@ -115,7 +115,6 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        set(gca,'YDir','normal');
         daspect([eyePositionFieldSize visualFieldSize 1]);
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
@@ -124,7 +123,6 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        set(gca,'YDir','normal');
         daspect([eyePositionFieldSize visualFieldSize 1]);
         
         % input space

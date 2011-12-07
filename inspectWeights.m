@@ -51,7 +51,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
         weightBox1 = afferentSynapseMatrix(fileID, networkDimensions, neuronOffsets, 2, 1, row, col, 1, 1);
         cla
         imagesc(weightBox1);
-        dim = size(weightBox1);
+        dim = fliplr(size(weightBox1));
         daspect([dim 1]);
         colorbar;
         

@@ -58,7 +58,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
             subplot(numRegions, 1, r);
             m = squeeze(data{r-1}(row, col, :, :));
             cla
-            imagesc(m > 0);
+            imagesc(m); % > 0
             colorbar
             title('Layer response');
         end

@@ -35,7 +35,8 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % Save results for summary
-    filename = [experimentFolder 'Summary_' num2str(length(listing)) '.html']; % Make name that is always original so we dont overwrite old summary which is from previous xGridCleanup run of partial results from this same parameter search
+    % num2str(length(listing))
+    filename = [experimentFolder 'Summary.html']; % Make name that is always original so we dont overwrite old summary which is from previous xGridCleanup run of partial results from this same parameter search
     fileID = fopen(filename, 'w'); % did note use datestr(now) since it has string
     
     % HTML header with javascript/css for JQUERY table plugin
