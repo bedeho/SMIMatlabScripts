@@ -69,9 +69,9 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
 
         retinalPositions = buffer(sampleCounter, 2:(numberOfSimultanousObjects + 1)); 
         
-        if eyePosition == 57.5 && retinalPositions == -20,
-            eyePosition = eyePosition;
-        end
+        %if eyePosition == 57.5 && retinalPositions == -20,
+        %    eyePosition = eyePosition;
+        %end
          
         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
         
@@ -103,7 +103,10 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
                 % eye modulation
                 sigmoidPositive(i,j) = sigmoidPositive(i,j) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
                 sigmoidNegative(i,j) = sigmoidNegative(i,j) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
-                
+
+                %sigmoidPositive(i,j) = sigmoidPositive(i,j) * exp(-(eyePosition - e)^2/(2*gaussianSigma^2)); % positive slope
+                %sigmoidNegative(i,j) = sigmoidNegative(i,j) * exp(-(eyePosition - e)^2/(2*gaussianSigma^2)); % negative slope
+
             end
         end
         
