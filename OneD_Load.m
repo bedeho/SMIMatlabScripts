@@ -31,10 +31,15 @@ function [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePosition
     % are in arbitrary locations, at the very least in real data.
     counter = 0;
     buffer = []; % we could compute a funky and very loose upper bound on size, but it would be odd
-    while ~feof(fileID),
+    while true,
         
         % Read sample from file
         eyePosition = fread(fileID, 1, 'float');
+        
+        % Check if we read last sample in file
+        if feof(fileID)
+            break;
+        end
         
         % Consume reset
         if ~isnan(eyePosition),
@@ -44,7 +49,7 @@ function [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePosition
         else
 
             % Reset counter at last object
-            buffer = [buffer; nan (nan * ones(1,numberOfSimultanousObjects))];
+            buffer = [buffer; nan (nan * ones(1,numberOfSimultanousObjects))]
         end
         
         counter = counter + 1;

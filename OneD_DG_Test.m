@@ -25,9 +25,9 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     % General
     %nrOfVisualTargetLocations   = 4;
     nrOfTestingTargets          = 10;
-    nrOfEyePositions            = 3;
+    nrOfEyePositions            = 2;
     samplingRate                = 10;	% (Hz)
-    fixationDuration            = 0.5;	% (s) - fixation period after each saccade
+    fixationDuration            = 3.0;	% (s) - fixation period after each saccade
 
     % non-Elmsley
     %visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
