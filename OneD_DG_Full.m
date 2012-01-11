@@ -5,7 +5,9 @@
 %  Created by Bedeho Mender on 15/11/11.
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
-%  Purpose: Generates the simplest possible 1d dynamical data
+%  Purpose: Generates testing data which tests in exactly the training
+%  positions and which makes the result of this test in the appropriate
+%  format for the analysis scripts.
 %
 
 function OneD_DG_Full(stimuliName)
