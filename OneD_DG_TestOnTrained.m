@@ -10,7 +10,7 @@
 %  format for the analysis scripts.
 %
 
-function OneD_DG_FullTest(stimuliName)
+function OneD_DG_TestOnTrained(stimuliName)
 
     % Import global variables
     declareGlobalVars();
