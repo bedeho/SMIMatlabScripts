@@ -12,12 +12,12 @@ function OneD_Visualize(stimuliName)
   
     global OneDVisualizeTimeObject; % exporting
     global buffer;                  % exporting
-    global sampleCounter;           % exporting
-    global fileCounter;             % exporting
+    global lineCounter;           % exporting             
+    global nrOfObjectsFoundSoFar;   % exporting
     
     % Init
-    sampleCounter = 1;
-    fileCounter = 1;
+    lineCounter = 1;
+    nrOfObjectsFoundSoFar = 0;
     
     % Parameters
     playAtPrcntOfOriginalSpeed = 1;

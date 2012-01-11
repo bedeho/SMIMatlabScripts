@@ -12,8 +12,8 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
 
     global buffer;
-    global sampleCounter;      % must be global to be visible across callbacks
-    global fileCounter;
+    global lineCounter;      % must be global to be visible across callbacks
+    global nrOfObjectsFoundSoFar;
     
     % LIP Parameters
     visualPreferenceDistance = 2;
@@ -45,7 +45,7 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     sigmoidNegative = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
     
     % Update time counter
-    OneDVisualizeTimer = sampleCounter*timeStep;
+    OneDVisualizeTimer = (lineCounter - nrOfObjectsFoundSoFar)*timeStep;
     total = uint64(OneDVisualizeTimer * 1000);
     
     fullMin = idivide(total, 60*1000);
@@ -56,9 +56,8 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     fullMs = mod(totalWithoutFullMin, 1000);
     
     % Read sample file
-    if fileCounter <= length(buffer),
-        eyePosition = buffer(fileCounter, 1);
-        fileCounter = fileCounter + 1;
+    if lineCounter <= length(buffer),
+        eyePosition = buffer(lineCounter, 1);
     else
         stop(OneDVisualizeTimeObject);
         return;
@@ -67,19 +66,17 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     % Consume reset
     if ~isnan(eyePosition),
 
-        retinalPositions = buffer(sampleCounter, 2:(numberOfSimultanousObjects + 1)); 
-        
-        %if eyePosition == 57.5 && retinalPositions == -20,
-        %    eyePosition = eyePosition;
-        %end
+        retinalPositions = buffer(lineCounter, 2:(numberOfSimultanousObjects + 1)); 
          
         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
         
         draw();
         
-        sampleCounter = sampleCounter + 1;
-         
+        lineCounter = lineCounter + 1;
+  
     else
+        lineCounter = lineCounter + 1;
+        nrOfObjectsFoundSoFar = nrOfObjectsFoundSoFar + 1;
         disp('object done********************');
         return;
     end
@@ -137,8 +134,9 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
         temp(v(:,1),:) = [];  % blank out all these rows
         
         % plot
+        rows = 1:(lineCounter - nrOfObjectsFoundSoFar);
         for o = 1:numberOfSimultanousObjects,
-            plot(temp(1:sampleCounter,1), temp(1:sampleCounter,o + 1) , 'o');
+            plot(temp(rows, 1), temp(rows ,o + 1) , 'o');
             
             hold on;
         end
