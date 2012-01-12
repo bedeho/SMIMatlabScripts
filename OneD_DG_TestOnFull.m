@@ -1,5 +1,5 @@
 %
-%  OneD_DG_TestOnTrained.m
+%  OneD_DG_TestOnFull.m
 %  SMI
 %
 %  Created by Bedeho Mender on 15/11/11.
@@ -10,42 +10,25 @@
 %  format for the analysis scripts.
 %
 
-function OneD_DG_TestOnTrained(stimuliName)
+function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePositionFieldSize)
 
     % Import global variables
     declareGlobalVars();
     
     global base;
     
-    % Movement parameters
-    fixationDuration = 1; % (s)0
+    % Resolution for test
+    retinalStepSize = 20; % (deg)
+    eyePositionStepSize = 20; % (deg)
     
-    stimuliFolder = [base 'Stimuli/' stimuliName '_testontrained'];
+    % Movement parameters
+    fixationDuration = 0.5; % (s)0
+    
+    stimuliFolder = [base 'Stimuli/' stimuliName '_testOnFull'];
     
     % Make folder
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
-    end
-    
-    % Load file
-    [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);
-    
-    % Parse data
-    lastObjectEnd = 0;
-    objectsFound = 0;
-    minSequenceLength = bitmax; % Saves the number of data points per head centered location we will include
-    for c = 1:length(buffer),
-        
-        eyePosition = buffer(c, 1);
-        
-        if isnan(eyePosition),
-            objectsFound = objectsFound + 1;
-            objects{objectsFound} = buffer((lastObjectEnd + 1):(c-1), :); % use cell to support varying stream sizes
-            lastObjectEnd = c;
-            
-            % Check if this is the new shortest sequence
-            minSequenceLength = min(minSequenceLength, length(objects{objectsFound}));
-        end
     end
     
     % Open file
@@ -61,13 +44,16 @@ function OneD_DG_TestOnTrained(stimuliName)
     fwrite(fileID, eyePositionFieldSize, 'float');
     
     ticksPrSample = fixationDuration * samplingRate;
-   
+    
     % Output data sequence for each target
-    for o = 1:objectsFound,
-        for s = 1:minSequenceLength,
+    visualTargets = centerDistance(visualFieldSize, retinalStepSize);
+    eyePositionTargets = centerDistance(eyePositionFieldSize, eyePositionStepSize);
+    
+    for v = visualTargets,
+        for s = eyePositionTargets,
             
             % Duplicat sample and write out duplicates in column order
-            repeatedSample = repmat(objects{o}(s,:)',1,ticksPrSample)
+            repeatedSample = repmat([s v]',1,ticksPrSample);
             fwrite(fileID, repeatedSample, 'float');
             
             % Inject transform stop

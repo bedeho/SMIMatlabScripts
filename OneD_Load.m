@@ -49,7 +49,7 @@ function [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePosition
         else
 
             % Reset counter at last object
-            buffer = [buffer; nan (nan * ones(1,numberOfSimultanousObjects))]
+            buffer = [buffer; nan (nan * ones(1,numberOfSimultanousObjects))];
         end
         
         counter = counter + 1;
