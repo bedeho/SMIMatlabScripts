@@ -24,7 +24,7 @@ function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePosit
     % Movement parameters
     fixationDuration = 0.5; % (s)0
     
-    stimuliFolder = [base 'Stimuli/' stimuliName '_testOnFull'];
+    stimuliFolder = [base 'Stimuli/' stimuliName '_TestOnFull'];
     
     % Make folder
     if ~isdir(stimuliFolder),
@@ -49,8 +49,11 @@ function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePosit
     visualTargets = centerDistance(visualFieldSize, retinalStepSize);
     eyePositionTargets = centerDistance(eyePositionFieldSize, eyePositionStepSize);
     
-    for v = visualTargets,
-        for s = eyePositionTargets,
+    % Flip data to make it match visualizer better
+    visualTargets = fliplr(visualTargets);
+    
+    for s = eyePositionTargets,
+        for v = visualTargets,
             
             % Duplicat sample and write out duplicates in column order
             repeatedSample = repmat([s v]',1,ticksPrSample);

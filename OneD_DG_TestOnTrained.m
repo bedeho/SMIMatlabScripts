@@ -20,9 +20,10 @@ function OneD_DG_TestOnTrained(stimuliName)
     % Movement parameters
     fixationDuration = 1; % (s)0
     
-    stimuliFolder = [base 'Stimuli/' stimuliName '_testontrained'];
     
     % Make folder
+    str = strsplit(stimuliName,'_');
+    stimuliFolder = [base 'Stimuli/' char(str{1}) '_TestOnTrained'];
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
     end
@@ -67,7 +68,7 @@ function OneD_DG_TestOnTrained(stimuliName)
         for s = 1:minSequenceLength,
             
             % Duplicat sample and write out duplicates in column order
-            repeatedSample = repmat(objects{o}(s,:)',1,ticksPrSample)
+            repeatedSample = repmat(objects{o}(s,:)',1,ticksPrSample);
             fwrite(fileID, repeatedSample, 'float');
             
             % Inject transform stop
