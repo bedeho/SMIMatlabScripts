@@ -49,6 +49,9 @@ function OneD_DG_TestOnTrained(stimuliName)
         end
     end
     
+    % Use as nrOfEyePositionsInTesting in analysis
+    disp(['nrOfEyePositionsInTesting = ' num2str(minSequenceLength)]); 
+    
     % Open file
     filename = [stimuliFolder '/data.dat'];
     fileID = fopen(filename,'w');

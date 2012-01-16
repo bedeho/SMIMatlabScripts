@@ -32,14 +32,14 @@ function [networkDimensions, historyDimensions, neuronOffsets, headerSize] = loa
     historyDimensions.numEpochs = v(1);
     historyDimensions.numObjects = v(2);
     historyDimensions.numOutputsPrObject = v(3);
-
+    numRegions = v(4);
+    
     % Compound stream sizes
     historyDimensions.objectSize = historyDimensions.numOutputsPrObject;
     historyDimensions.epochSize = historyDimensions.objectSize * historyDimensions.numObjects;
     historyDimensions.streamSize = historyDimensions.epochSize * historyDimensions.numEpochs;
     
     % Preallocate struct array
-    numRegions = v(4);
     networkDimensions(numRegions).y_dimension = [];
     networkDimensions(numRegions).x_dimension = [];
     networkDimensions(numRegions).depth = []; 

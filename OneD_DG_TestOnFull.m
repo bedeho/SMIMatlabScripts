@@ -22,7 +22,7 @@ function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePosit
     eyePositionStepSize = 20; % (deg)
     
     % Movement parameters
-    fixationDuration = 0.5; % (s)0
+    fixationDuration = 0.1; % (s)0
     
     stimuliFolder = [base 'Stimuli/' stimuliName '_TestOnFull'];
     
