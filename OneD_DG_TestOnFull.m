@@ -19,7 +19,7 @@ function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePosit
     
     % Resolution for test
     retinalStepSize = 20; % (deg)
-    eyePositionStepSize = 20; % (deg)
+    eyePositionStepSize = 15; % (deg) 20 was first
     
     % Movement parameters
     fixationDuration = 0.1; % (s)0
@@ -48,6 +48,10 @@ function OneD_DG_TestOnFull(stimuliName, samplingRate, visualFieldSize, eyePosit
     % Output data sequence for each target
     visualTargets = centerDistance(visualFieldSize, retinalStepSize);
     eyePositionTargets = centerDistance(eyePositionFieldSize, eyePositionStepSize);
+    
+    % Remove edges
+    visualTargets = visualTargets(2:(end-1));
+    eyePositionTargets = eyePositionTargets(2:(end-1));
     
     % Flip data to make it match visualizer better
     visualTargets = fliplr(visualTargets);

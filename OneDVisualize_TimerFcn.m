@@ -16,10 +16,10 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     global nrOfObjectsFoundSoFar;
     
     % LIP Parameters
-    visualPreferenceDistance = 2;
-    eyePositionPrefrerenceDistance = 2;
+    visualPreferenceDistance = 6;
+    eyePositionPrefrerenceDistance = 6;
     
-    gaussianSigma = 5; % deg
+    gaussianSigma = 16; % deg
     sigmoidSlope = 0.5; % num
     
     % Elmsley eye model

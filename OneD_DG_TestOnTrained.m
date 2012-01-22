@@ -18,12 +18,11 @@ function OneD_DG_TestOnTrained(stimuliName)
     global base;
     
     % Movement parameters
-    fixationDuration = 1; % (s)0
-    
+    fixationDuration = 0.2; % (s) 0
     
     % Make folder
     str = strsplit(stimuliName,'_');
-    stimuliFolder = [base 'Stimuli/' char(str{1}) '_TestOnTrained'];
+    stimuliFolder = [base 'Stimuli/' char(str{1}) '_testOnTrained'];
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
     end
@@ -32,6 +31,9 @@ function OneD_DG_TestOnTrained(stimuliName)
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);
     
     % Parse data
+    [objects, minSequenceLength, objectsFound] = OneD_Parse(buffer);
+    
+    %{
     lastObjectEnd = 0;
     objectsFound = 0;
     minSequenceLength = bitmax; % Saves the number of data points per head centered location we will include
@@ -42,15 +44,20 @@ function OneD_DG_TestOnTrained(stimuliName)
         if isnan(eyePosition),
             objectsFound = objectsFound + 1;
             objects{objectsFound} = buffer((lastObjectEnd + 1):(c-1), :); % use cell to support varying stream sizes
+            
+            % Clean up duplicates
+            %objects{objectsFound} = unique(objects{objectsFound}, 'rows');
+            
             lastObjectEnd = c;
             
             % Check if this is the new shortest sequence
             minSequenceLength = min(minSequenceLength, length(objects{objectsFound}));
         end
     end
+    %}
     
     % Use as nrOfEyePositionsInTesting in analysis
-    disp(['nrOfEyePositionsInTesting = ' num2str(minSequenceLength)]); 
+    nrOfEyePositionsInTesting = num2str(minSequenceLength)
     
     % Open file
     filename = [stimuliFolder '/data.dat'];
@@ -65,6 +72,10 @@ function OneD_DG_TestOnTrained(stimuliName)
     fwrite(fileID, eyePositionFieldSize, 'float');
     
     ticksPrSample = fixationDuration * samplingRate;
+    
+    if(ticksPrSample < 1) 
+        error(['ticksPrSample < 1' ticksPrSample]);
+    end
    
     % Output data sequence for each target
     for o = 1:objectsFound,

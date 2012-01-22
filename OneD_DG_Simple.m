@@ -23,13 +23,13 @@ function OneD_DG_Simple(stimuliName)
     end
 
     % General
-    nrOfVisualTargetLocations   = 4;
+    nrOfVisualTargetLocations   = 2;
     
     % Movement parameters
     saccadeVelocity             = 400;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
-    samplingRate                = 4;	% (Hz)
-    fixationDuration            = 0.1; % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 10;   % (deg) - angular magnitude of each saccade, after which there is a fixation periode
+    samplingRate                = 100;	% (Hz)
+    fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
+    saccadeAmplitude            = 16;    % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
@@ -80,7 +80,7 @@ function OneD_DG_Simple(stimuliName)
         eyePosition = leftMostEyePosition;              % Center on 0, start on left edge (e.g. -100 deg)
     
         doTimeSteps();
-        disp('object done*******************');
+        %disp('object done*******************');
         fwrite(fileID, NaN('single'), 'float');         % transform flag
     end
 
@@ -98,7 +98,11 @@ function OneD_DG_Simple(stimuliName)
     
     % Generate complementary testing data
     OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionFieldSize);
-
+    OneD_DG_TestOnTrained([stimuliName '_training']);
+    
+    % Visualize
+    OneD_Overlay([stimuliName '_training'],[stimuliName '_testOnTrained'])
+    
     function doTimeSteps()
 
         % Do all timesteps, 
@@ -106,7 +110,10 @@ function OneD_DG_Simple(stimuliName)
         while true,
 
             % Do one timestep
-            remainederOfTimeStep = timeStep; % how much of present time step remains
+            
+            % We start by setting the remainder to the full time step
+            % remainederOfTimeStep = how much of present time step remains
+            remainederOfTimeStep = timeStep;
 
             while remainederOfTimeStep > 0, 
 
@@ -141,7 +148,7 @@ function OneD_DG_Simple(stimuliName)
             
             % Output data point if we are still within visual field
             if eyePosition < rightMostEyePosition,
-                disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]); % relationhip is t = r + e
+                %disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]); % relationhip is t = r + e
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
             else

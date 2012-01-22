@@ -16,7 +16,7 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     global base;
 
     % Make folder
-    stimuliFolder = [base 'Stimuli/' stimuliName '_testing'];
+    stimuliFolder = [base 'Stimuli/' stimuliName '_stdTest'];
     
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
@@ -25,9 +25,9 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     % General
     %nrOfVisualTargetLocations   = 4;
     nrOfTestingTargets          = 10;
-    nrOfEyePositions            = 2;
+    nrOfEyePositions            = 4;
     samplingRate                = 10;	% (Hz)
-    fixationDuration            = 3.0;	% (s) - fixation period after each saccade
+    fixationDuration            = 0.2;	% (s) - fixation period after each saccade
 
     % non-Elmsley
     %visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
@@ -56,12 +56,12 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
         for t = targets,
             for sampleCounter = 1:samplesPrLocation,
             
-                disp(['Saved: eye =' num2str(e) ', ret =' num2str(t - e)]); % head centered data outputted, relationhip is t = r + e
+                %disp(['Saved: eye =' num2str(e) ', ret =' num2str(t - e)]); % head centered data outputted, relationhip is t = r + e
                 fwrite(fileID, e, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - e, 'float'); % Fixation offset of target
             end
             
-            disp('object done*******************');
+            %disp('object done*******************');
             fwrite(fileID, NaN('single'), 'float'); % transform flag
         end
     end
