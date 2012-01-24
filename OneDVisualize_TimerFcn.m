@@ -19,8 +19,8 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     visualPreferenceDistance = 6;
     eyePositionPrefrerenceDistance = 6;
     
-    gaussianSigma = 16; % deg
-    sigmoidSlope = 0.5; % num
+    gaussianSigma = 10; % deg
+    sigmoidSlope = 50; % num
     
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)

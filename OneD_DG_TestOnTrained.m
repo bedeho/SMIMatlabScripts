@@ -86,7 +86,8 @@ function OneD_DG_TestOnTrained(stimuliName)
        end
     end
     
-    nrOfCleanedUpPointsFound
+    %% not nrofeyepositions, its the other one
+    %%nrOfCleanedUpPointsFound
     
     % Close file
     fclose(fileID);

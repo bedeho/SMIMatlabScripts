@@ -73,22 +73,22 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         markerSpecifiers = {'r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>'}; %, '<', 'p', 'h'''
         
-        m = 1;
+        m = 1.1;
         
-        for o= 1:objectsPrEyePosition,
+        for h = 1:nrOfEyePositionsInTesting,
             
-            v = squeeze(data{region-1}(o, :, row, col));
+            v = squeeze(data{region-1}(:, h, row, col));
             
             if max(v) > m,
                 m = max(v);
             end
             
-            plot(v, [':' markerSpecifiers{o}]);
+            plot(v, [':' markerSpecifiers{h}]);
             
             hold all;
         end  
 
-        axis([1 nrOfEyePositionsInTesting -0.1 m]);
+        axis([1 objectsPrEyePosition -0.1 m]);
         
         %%}
         
