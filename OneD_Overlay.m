@@ -12,14 +12,18 @@ function OneD_Overlay(trainingStimuliName, testingStimuliName)
     fig = figure();
 
     % Plot spatial data
-    subplot(1,2,1);
+    subplot(1,3,1);
     plotStimuli(trainingStimuliName, 'ro');
     plotStimuli(testingStimuliName, 'bx');
     
-    % Plot temporal eye movement data
-    subplot(1,2,2);
-    plotEyeMovements(trainingStimuliName, 'r*');
-    
+    % Plot temporal eye movement data of training
+    subplot(1,3,2);
+    plotEyeMovements(trainingStimuliName);
+
+    % Plot temporal eye movement data of testing
+    subplot(1,3,3);
+    plotEyeMovements(testingStimuliName);
+
     function plotStimuli(name, color)
         
         % Load file
@@ -64,18 +68,20 @@ function OneD_Overlay(trainingStimuliName, testingStimuliName)
         [objects, minSequenceLength, objectsFound] = OneD_Parse(buffer);
 
         % Plot movement dynamics of each object
-        totalTimePerObject = minSequenceLength * timeStep;
-
+        totalTimePerObject = (minSequenceLength-1) * timeStep;
+        
         % Plot spatial data
+        markerSpecifiers = {'r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>'};
         for o = 1:objectsFound,
             
             tmp = objects{o};
-            plot(timeStep:timeStep:totalTimePerObject, tmp(:,1) , color);
+            plot(0:timeStep:totalTimePerObject, tmp(:,1) , markerSpecifiers{o});
 
             hold on;
         end
 
-        %daspect([eyePositionFieldSize visualFieldSize 1]);
         axis([0 totalTimePerObject leftMostEyePosition rightMostEyePosition]);
+        
+        title(name);
     end
 end

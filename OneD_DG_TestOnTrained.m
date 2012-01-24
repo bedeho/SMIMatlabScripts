@@ -19,6 +19,7 @@ function OneD_DG_TestOnTrained(stimuliName)
     
     % Movement parameters
     fixationDuration = 0.2; % (s) 0
+    simulatorTimeStepSize = 0.1*0.5
     
     % Make folder
     str = strsplit(stimuliName,'_');
@@ -30,34 +31,19 @@ function OneD_DG_TestOnTrained(stimuliName)
     % Load file
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);
     
+    ticksPrSample = fixationDuration * samplingRate;
+    
+    if(ticksPrSample < 1) 
+        error(['ticksPrSample < 1' ticksPrSample]);
+    end
+    
     % Parse data
     [objects, minSequenceLength, objectsFound] = OneD_Parse(buffer);
+    objectDuration = minSequenceLength/samplingRate;
+    nrOfModelTicks = floor(objectDuration/simulatorTimeStepSize);
     
-    %{
-    lastObjectEnd = 0;
-    objectsFound = 0;
-    minSequenceLength = bitmax; % Saves the number of data points per head centered location we will include
-    for c = 1:length(buffer),
-        
-        eyePosition = buffer(c, 1);
-        
-        if isnan(eyePosition),
-            objectsFound = objectsFound + 1;
-            objects{objectsFound} = buffer((lastObjectEnd + 1):(c-1), :); % use cell to support varying stream sizes
-            
-            % Clean up duplicates
-            %objects{objectsFound} = unique(objects{objectsFound}, 'rows');
-            
-            lastObjectEnd = c;
-            
-            % Check if this is the new shortest sequence
-            minSequenceLength = min(minSequenceLength, length(objects{objectsFound}));
-        end
-    end
-    %}
-    
-    % Use as nrOfEyePositionsInTesting in analysis
-    nrOfEyePositionsInTesting = num2str(minSequenceLength)
+    %% Use as nrOfEyePositionsInTesting in analysis
+    %%nrOfEyePositionsInTesting = num2str(minSequenceLength)
     
     % Open file
     filename = [stimuliFolder '/data.dat'];
@@ -71,25 +57,37 @@ function OneD_DG_TestOnTrained(stimuliName)
     fwrite(fileID, visualFieldSize, 'float');
     fwrite(fileID, eyePositionFieldSize, 'float');
     
-    ticksPrSample = fixationDuration * samplingRate;
-    
-    if(ticksPrSample < 1) 
-        error(['ticksPrSample < 1' ticksPrSample]);
-    end
-   
     % Output data sequence for each target
+    nrOfCleanedUpPointsFound = 0;
     for o = 1:objectsFound,
-        for s = 1:minSequenceLength,
+        
+        % Compute what model sees
+        data = linearInterpolate(objects{o});
+        
+        % Remove redundancy
+        cleanedUp = unique(data,'rows');
+        x = length(cleanedUp);
+        
+        if o > 1 && nrOfCleanedUpPointsFound ~= x,
+            error('Number of cleaned up points vary');
+        end
+        
+        nrOfCleanedUpPointsFound = x;
+        
+        % For each unique data point output stream
+        for s = cleanedUp',
             
             % Duplicat sample and write out duplicates in column order
-            repeatedSample = repmat(objects{o}(s,:)',1,ticksPrSample);
+            repeatedSample = repmat(s,1,ticksPrSample);
             fwrite(fileID, repeatedSample, 'float');
             
             % Inject transform stop
             fwrite(fileID, NaN('single'), 'float'); 
        end
     end
-
+    
+    nrOfCleanedUpPointsFound
+    
     % Close file
     fclose(fileID);
     
@@ -101,5 +99,45 @@ function OneD_DG_TestOnTrained(stimuliName)
         error(['Could not create xgridPayload.tbz' result]);
     end
     cd(startDir);
+    
+    function data = linearInterpolate(samples)
+        
+        dim = size(samples);
+        sampleDimension = dim(2);
+        
+        data = zeros(nrOfModelTicks+1,2);
+        
+        dx = (1/samplingRate);
+        
+        %go through 'samples' at steps of 'simulatorTimeStepSize'
+        %interpolate points.
+        for t = 0:nrOfModelTicks, % start at 0 because that is where the model starts
+           
+            time = (t * simulatorTimeStepSize);
+            streamPoint = (time / dx);
+            startPoint = floor(streamPoint); % this should in theory never be last sample point
+            overflow = streamPoint - startPoint;
+            
+            startPoint = startPoint + 1; % 1 based indexing.
+            
+            if startPoint < length(samples), % check if we are on the last point
+                
+                for i = 1:sampleDimension,
+                    
+                    dy = samples(startPoint + 1,i) - samples(startPoint,i);
+                    slope = dy/dx;
+                    intercept = samples(startPoint,i);
+                    f = intercept + slope*overflow; 
+                    
+                    val(i) = str2double(sprintf('%.1f',f));
+                end
+            else
+                val = samples(end,:);
+            end
+            
+            data(t+1,:) = val;
+        end
+        
+    end
     
 end
