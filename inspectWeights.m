@@ -13,7 +13,7 @@ function inspectWeights(networkFile, filename, nrOfEyePositionsInTesting)
     [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting); % (object, eye_position, row, col, region)
     
     % Setup activity plot
-    fig = figure('name',filename);
+    fig = figure('name',filename,'NumberTitle','off');
     clickAxis = subplot(3, 1, 1);
     v0 = data{end};
     v0(v0 > 0) = 1;  % count all nonzero as 1, error terms have already been removed
