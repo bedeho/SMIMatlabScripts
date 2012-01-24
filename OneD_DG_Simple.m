@@ -29,7 +29,7 @@ function OneD_DG_Simple(stimuliName)
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 100;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 90;    % (deg) - angular magnitude of each saccade, after which there is a fixation periode
+    saccadeAmplitude            = 50;    % (deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)

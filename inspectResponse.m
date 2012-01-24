@@ -20,7 +20,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
     axisVals = zeros(numRegions-1, 1); % Save axis that we can lookup 'CurrentPoint' property on callback
     
     % Iterate regions to do correlation plot and setup callbacks
-    fig = figure();
+    fig = figure('name',filename);
     for r=2:numRegions
         
         % Save axis

@@ -18,7 +18,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
     numRegions = length(networkDimensions);
 
     % Setup activity plot
-    fig = figure();
+    fig = figure('name',filename);
     clickAxis = subplot(numRegions, 1, 1);
     
     total = zeros(objectsPrEyePosition, nrOfEyePositionsInTesting);
