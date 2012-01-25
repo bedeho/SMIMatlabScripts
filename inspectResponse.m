@@ -17,14 +17,14 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
     
     % Setup vars
     numRegions = length(networkDimensions);
-    axisVals = zeros(numRegions-1, 1); % Save axis that we can lookup 'CurrentPoint' property on callback
+    axisVals = zeros(2*(numRegions-1)+1, 1); % Save axis that we can lookup 'CurrentPoint' property on callback
     
     % Iterate regions to do correlation plot and setup callbacks
     fig = figure('name',filename,'NumberTitle','off');
     for r=2:numRegions
         
         % Save axis
-        axisVals(r-1) = subplot(numRegions, 1, r-1);
+        axisVals(2*(r-2) + 1) = subplot(2*(numRegions - 1) + 1, 1, 2*(r-2) + 1); % Simon model
         
         %% TRADITIONAL TEST
         %{ 
@@ -34,7 +34,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         %% SIMON TEST
         %%{
-        v0 = data{end};
+        v0 = data{r-1};
         v0(v0 > 0) = 1;  % count all nonzero as 1, error terms have already been removed
         v1 = squeeze(sum(sum(v0))); % sum away
         v2 = v1(:,:,1);
@@ -44,6 +44,10 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         %%}
     
         colorbar;
+        
+        % Histogram
+        axisVals(2*(r-2) + 2) = subplot(2*(numRegions-1) + 1, 1, 2*(r-2) + 2); % Simon model
+        hist(v2(:),1:(max(max(v2))));
         
         % Setup callback
         set(im, 'ButtonDownFcn', {@responseCallBack, r});
@@ -57,14 +61,14 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         % Extract region,row,col
         region = varargin{3};
 
-        pos = get(axisVals(region-1), 'CurrentPoint');
+        pos = get(axisVals(2*(region-2) + 1), 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         % Dump correlation
         disp(['Correlation: ' num2str(regionCorrs{region-1}(row,col))]);
         
         % Setup blank plot
-        axisVals(numRegions) = subplot(numRegions, 1, numRegions);
+        axisVals(2*(numRegions-1)+1) = subplot(2*(numRegions - 1) + 1, 1, 2*(numRegions - 1) + 1);
     
         %% SIMON STYLE - object based line plot
         %%{
