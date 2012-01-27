@@ -23,7 +23,7 @@ function OneD_Overlay(trainingStimuliName, testingStimuliName)
     % Plot temporal eye movement data of testing
     subplot(1,3,3);
     plotEyeMovements(testingStimuliName);
-
+    
     function plotStimuli(name, color)
         
         % Load file

@@ -19,6 +19,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
 
     % Setup activity plot
     fig = figure('name',filename,'NumberTitle','off');
+    
     clickAxis = subplot(numRegions, 1, 1);
     
     total = zeros(objectsPrEyePosition, nrOfEyePositionsInTesting);
@@ -60,7 +61,7 @@ function inspectRepresentation(filename, nrOfEyePositionsInTesting)
             cla
             imagesc(m); % > 0
             colorbar
-            title('Layer response');
+            title(['Layer: ' num2str(r)]);
         end
     end
 end

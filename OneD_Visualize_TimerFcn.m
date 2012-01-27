@@ -7,42 +7,26 @@
 %
 %  Draws graphics - TimerFcn callback 
 
-function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, fig)
+function OneD_Visualize_TimerFcn(obj, event)
 
+    % Exporting
     global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
 
+    % Importing
     global buffer;
-    global lineCounter;      % must be global to be visible across callbacks
+    global lineCounter;             % must be global to be visible across callbacks
     global nrOfObjectsFoundSoFar;
+    global timeStep;
+    global fig;
     
-    % LIP Parameters
-    visualPreferenceDistance = 6;
-    eyePositionPrefrerenceDistance = 6;
-    
-    gaussianSigma = 10; % deg
-    sigmoidSlope = 50; % num
-    
-    % Elmsley eye model
-    % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
-    % Eyeball                   = ;     % Radius of each eyeball (meters)
-    % EyeSpacing                = ;     % Half eye center distance (meters)
-    % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
-    
-    % Derived
-    leftMostVisualPosition = -visualFieldSize/2;
-    rightMostVisualPosition = visualFieldSize/2;
-    leftMostEyePosition = -eyePositionFieldSize/2;
-    rightMostEyePosition = eyePositionFieldSize/2;     
-    
-    visualPreferences = centerDistance(visualFieldSize, visualPreferenceDistance);
-    eyePositionPreferences = centerDistance(eyePositionFieldSize, eyePositionPrefrerenceDistance);
-    
-    nrOfVisualPreferences = length(visualPreferences);
-    nrOfEyePositionPrefrerence = length(eyePositionPreferences);
-    
-    % allocate space, is reused
-    sigmoidPositive = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
-    sigmoidNegative = zeros(nrOfVisualPreferences, nrOfEyePositionPrefrerence);
+    global eyePositionFieldSize;
+    global visualFieldSize;
+    global visualPreferences;
+    global eyePositionPreferences;
+    global leftMostEyePosition; 
+    global rightMostEyePosition;
+    global leftMostVisualPosition;
+    global rightMostVisualPosition;
     
     % Update time counter
     OneDVisualizeTimer = (lineCounter - nrOfObjectsFoundSoFar)*timeStep;
@@ -70,6 +54,9 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
          
         disp(['Read: eye =' num2str(eyePosition) ', ret=' num2str(retinalPositions)]);
         
+        % Select figure
+        figure(fig);
+        
         draw();
         
         lineCounter = lineCounter + 1;
@@ -84,29 +71,13 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
     % draw LIP sig*gauss neurons and input space
     function draw()
         
-        % not in the matlab spirit, but I could not figure it out
-        for i = 1:nrOfVisualPreferences,
-            
-            v = visualPreferences((nrOfVisualPreferences + 1) - i); % flip it so that the top row prefers the right most retinal loc.
-
-            for j = 1:nrOfEyePositionPrefrerence,
-                
-                e = eyePositionPreferences(j);
-                
-                % visual component
-                sigmoidPositive(i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
-                sigmoidNegative(i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
-                
-                % eye modulation
-                sigmoidPositive(i,j) = sigmoidPositive(i,j) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
-                sigmoidNegative(i,j) = sigmoidNegative(i,j) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
-            end
-        end
+        v = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, [eyePosition retinalPositions]);
         
         % Clean up so that it is not hidden from us that stimuli is off
         % retina
-        sigmoidPositive(sigmoidPositive < 0.001) = 0;
-        sigmoidNegative(sigmoidNegative < 0.001) = 0;
+        v(v < 0.001) = 0;
+        sigmoidPositive = v(1,:,:);
+        sigmoidNegative = v(2,:,:);
         
         % + sigmoid
         subplot(3,1,1);
@@ -142,7 +113,7 @@ function OneDVisualize_TimerFcn(obj, event, timeStep, numberOfSimultanousObjects
         %x = eyePosition * ones(1, numberOfSimultanousObjects);
         %y = retinalPositions;
         %plot(x, y,'r*');
-        axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
+        %axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
     end
 
 end

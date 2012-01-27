@@ -48,6 +48,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         % Histogram
         axisVals(r-1,2) = subplot(numRegions, 2, 2*(r-2) + 2); % Simon model
         hist(v2(:),0:(max(max(v2))));
+        title(['Mean: ' num2str(mean2(v2))]);
         
         % Setup callback
         set(im, 'ButtonDownFcn', {@responseCallBack, r});
@@ -75,7 +76,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         cla
         
-        markerSpecifiers = {'r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>'}; %, '<', 'p', 'h'''
+        markerSpecifiers = {'r+', 'kv', 'bx', 'cs', 'md', 'y^', 'g.', 'w>'}; %, '<', 'p', 'h'''
         
         m = 1.1;
         

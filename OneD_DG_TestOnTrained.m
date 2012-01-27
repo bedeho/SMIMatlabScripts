@@ -18,7 +18,7 @@ function OneD_DG_TestOnTrained(stimuliName)
     global base;
     
     % Movement parameters
-    fixationDuration = 0.2; % (s) 0
+    fixationDuration = 0.5; % (s) 0
     simulatorTimeStepSize = 0.1*0.5
     
     % Make folder

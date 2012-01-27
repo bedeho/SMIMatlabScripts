@@ -21,44 +21,21 @@ function OneD_DG_Simple(stimuliName)
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
     end
-
-    % General
-    nrOfVisualTargetLocations   = 4;
     
+    % Load enviromental paramters
+    [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, rightMostEyePosition, visualPreferences, eyePositionPreferences, nrOfVisualPreferences, nrOfEyePositionPrefrerence, targetBoundary] = OneD_DG_Dimensions()
+
+
     % Movement parameters
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
     saccadeAmplitude            = 10;    % (deg) - angular magnitude of each saccade, after which there is a fixation periode
-
-    % Elmsley eye model
-    % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
-    % Eyeball                   = ;     % Radius of each eyeball (meters)
-    % EyeSpacing                = ;     % Half eye center distance (meters)
-    % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
-
-    % non-Elmsley
-    visualFieldSize             = 200 % Entire visual field (rougly 100 per eye), (deg)
-    targetRangeProportionOfVisualField = 0.5;
     
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     
-    if nrOfVisualTargetLocations > 1,
-        targets = centerN(visualFieldSize * targetRangeProportionOfVisualField, nrOfVisualTargetLocations);
-        targetBoundary = targets(end);
-    else
-        targets = 0;
-        targetBoundary = 10;
-    end
-    
-    % Make sure eye movement range is sufficiently confined to always keep any
-    % target on retina
-    eyePositionFieldSize = visualFieldSize - 2*targets(end)
-    leftMostEyePosition = -eyePositionFieldSize/2;
-    rightMostEyePosition = eyePositionFieldSize/2; 
-     
     % Open file
     filename = [stimuliFolder '/data.dat'];
     fileID = fopen(filename,'w');
@@ -85,7 +62,7 @@ function OneD_DG_Simple(stimuliName)
 
         % Output all samples for this target position
         doTimeSteps();
-        %disp('object done*******************');
+        
         fwrite(fileID, NaN('single'), 'float');         % transform flag
     end
 
@@ -104,6 +81,9 @@ function OneD_DG_Simple(stimuliName)
     % Generate complementary testing data
     OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionFieldSize);
     OneD_DG_TestOnTrained([stimuliName '_training']);
+    
+    % Generate correlation data
+    OneD_DG_Correlation([stimuliName '_testOnTrained']);
     
     % Visualize
     OneD_Overlay([stimuliName '_training'],[stimuliName '_testOnTrained'])

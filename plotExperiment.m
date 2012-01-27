@@ -130,6 +130,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                     outputButton('Activation', ['matlab:plotNetworkHistory(\\''' netDir '/activation.dat\\'')']);
                     outputButton('IActivation', ['matlab:plotNetworkHistory(\\''' netDir '/inhibitedActivation.dat\\'')']);
                     outputButton('Trace', ['matlab:plotNetworkHistory(\\''' netDir '/trace.dat\\'')']);
+                    outputButton('Stimulation', ['matlab:plotNetworkHistory(\\''' netDir '/stimulation.dat\\'')']);
                     fprintf(fileID, '</td>');
                     
                     % Network name: summary(s).directory '.txt\''
