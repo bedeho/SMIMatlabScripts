@@ -9,7 +9,7 @@
 
 function OneD_Overlay(trainingStimuliName, testingStimuliName)
 
-    fig = figure();
+    figure();
 
     % Plot spatial data
     subplot(1,3,1);

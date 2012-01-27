@@ -17,7 +17,11 @@ function OneD_Visualize(stimuliName)
     global nrOfObjectsFoundSoFar;
     global timeStep;
     global fig;
+
+    global dimensions;
+    dimensions = OneD_DG_Dimensions();
     
+    %{
     global numberOfSimultanousObjects;
     global eyePositionFieldSize;
     global visualFieldSize;
@@ -29,7 +33,14 @@ function OneD_Visualize(stimuliName)
     global rightMostVisualPosition;
     
     % Load dimensions
-    [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, rightMostEyePosition, visualPreferences, eyePositionPreferences, nrOfVisualPreferences, nrOfEyePositionPrefrerence, targetBoundary] = OneD_DG_Dimensions();
+    dimensions = OneD_DG_Dimensions();
+    visualPreferences = dimensions.visualPreferences;
+    eyePositionPreferences = dimensions.eyePositionPreferences;
+    leftMostEyePosition = dimensions.leftMostEyePosition;
+    rightMostEyePosition = dimensions.rightMostEyePosition;
+    leftMostVisualPosition = dimensions.leftMostVisualPosition;
+    rightMostVisualPosition = dimensions.rightMostVisualPosition;
+    %}
 
     % Load file
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);

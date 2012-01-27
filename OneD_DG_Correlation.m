@@ -12,15 +12,23 @@ function OneD_DG_Correlation(stimuliName)
     declareGlobalVars();
     
     global base;
-
+    
     % Generate correlation data
-    [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, rightMostEyePosition, visualPreferences, eyePositionPreferences, nrOfVisualPreferences, nrOfEyePositionPrefrerence, targetBoundary] = OneD_DG_Dimensions()
+    dimensions = OneD_DG_Dimensions()
+    
+    global tempspacetemp; % Export to OneD_DG_InputLayer
+    
+    % Allocate space, is reused
+    tempspacetemp = zeros(2, dimensions.nrOfVisualPreferences, dimensions.nrOfEyePositionPrefrerence);
+
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, bufferTesting] = OneD_Load(stimuliName);
     [objects, minSequenceLength, objectsFound] = OneD_Parse(bufferTesting);
     
     dotproduct = zeros(objectsFound, objectsFound);
     
     for o1 = 1:objectsFound,
+        
+        o1
         for o2 = 1:objectsFound,
             
             tmp1 = objects{o1};
@@ -30,15 +38,23 @@ function OneD_DG_Correlation(stimuliName)
             pattern1 = tmp1(1,:);
             pattern2 = tmp2(1,:);
             
-            v1 = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, pattern1);
-            v2 = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, pattern2);
+            OneD_DG_InputLayer(dimensions, pattern1);
+            v1 = tempspacetemp;
             
-            dotproduct(o1,o2) = dot(v1(:),v2(:));          
+            OneD_DG_InputLayer(dimensions, pattern2);
+            v2 = tempspacetemp;
+            
+            dotproduct(o1,o2) = dot(v1(:),v2(:));
+            
+            %%/ normalize
+            
         end
     end
     
     imagesc(dotproduct);
     
-    save([base 'Stimuli/' stimuliName '/correlation'], dotproduct); 
+    str = [base 'Stimuli/' stimuliName '/correlation'];
+    
+    save str dotproduct; 
 
 end

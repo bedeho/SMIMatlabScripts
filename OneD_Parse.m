@@ -1,4 +1,3 @@
-
 %
 %  OneD_Parse.m
 %  SMI

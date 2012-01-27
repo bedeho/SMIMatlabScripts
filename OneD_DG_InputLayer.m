@@ -6,14 +6,11 @@
 %  Copyright 2012 OFTNAI. All rights reserved.
 %
 
-function v = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, pattern)
+function OneD_DG_InputLayer(dimensions, pattern)
 
-    % allocate space, is reused
-    nrOfVisualPreferences = length(visualPreferences);
-    nrOfEyePositionPrefrerence = length(eyePositionPreferences);
-    
-    v = zeros(2, nrOfVisualPreferences, nrOfEyePositionPrefrerence);
-       
+    % Import
+    global tempspacetemp;
+
     % v(1,x,y) - sigmoid positive
     % v(2,x,y) - sigmoid negative
 
@@ -21,21 +18,21 @@ function v = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, patte
     eyePosition = pattern(1);
     
     % not in the matlab spirit, but I could not figure it out
-    for i = 1:nrOfVisualPreferences,
+    for i = 1:dimensions.nrOfVisualPreferences,
 
-        v = visualPreferences((nrOfVisualPreferences + 1) - i); % flip it so that the top row prefers the right most retinal loc.
+        x = dimensions.visualPreferences((dimensions.nrOfVisualPreferences + 1) - i); % flip it so that the top row prefers the right most retinal loc.
 
-        for j = 1:nrOfEyePositionPrefrerence,
+        for j = 1:dimensions.nrOfEyePositionPrefrerence,
 
-            e = eyePositionPreferences(j);
+            e = dimensions.eyePositionPreferences(j);
 
             % visual component
-            v(1,i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
-            v(2,i,j) = exp(-(retinalPositions - v).^2/(2*gaussianSigma^2));
+            tempspacetemp(1,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
+            tempspacetemp(2,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
 
             % eye modulation
-            v(1,i,j) = v(1,i,j) * 1/(1 + exp(sigmoidSlope * (eyePosition - e))); % positive slope
-            v(2,i,j) = v(2,i,j) * 1/(1 + exp(-1 * sigmoidSlope * (eyePosition - e))); % negative slope
+            tempspacetemp(1,i,j) = tempspacetemp(1,i,j) * 1/(1 + exp(dimensions.sigmoidSlope * (eyePosition - e))); % positive slope
+            tempspacetemp(2,i,j) = tempspacetemp(2,i,j) * 1/(1 + exp(-1 * dimensions.sigmoidSlope * (eyePosition - e))); % negative slope
         end
     end
            

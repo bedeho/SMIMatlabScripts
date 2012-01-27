@@ -6,14 +6,16 @@
 %  Copyright 2012 OFTNAI. All rights reserved.
 %
 
-function [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, rightMostEyePosition, visualPreferences, eyePositionPreferences, nrOfVisualPreferences, nrOfEyePositionPrefrerence, targetBoundary] = OneD_DG_Dimensions()
+function dimensions = OneD_DG_Dimensions()
 
     % Stimuli
-    nrOfVisualTargetLocations   = 4;
+    dimensions.nrOfVisualTargetLocations  = 4;
+    dimensions.numberOfSimultanousObjects = 1;
     
     % Enviroment (non-Elmsley)
-    visualFieldSize             = 200 % Entire visual field (rougly 100 per eye), (deg)
-    targetRangeProportionOfVisualField = 0.5;
+    dimensions.visualFieldSize             = 200; % Entire visual field (rougly 100 per eye), (deg)
+    dimensions.targetRangeProportionOfVisualField = 0.5;
+    
     % Elmsley eye model
     % DistanceToScreen          = ;     % Eye centers line to screen distance (meters)
     % Eyeball                   = ;     % Radius of each eyeball (meters)
@@ -21,36 +23,36 @@ function [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, 
     % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
 
     % LIP Parameters
-    visualPreferenceDistance = 2;
-    eyePositionPrefrerenceDistance = 2;
-    gaussianSigma = 2; % deg
-    sigmoidSlope = 50; % num
+    dimensions.visualPreferenceDistance = 2;
+    dimensions.eyePositionPrefrerenceDistance = 2;
+    dimensions.gaussianSigma = 2; % deg
+    dimensions.sigmoidSlope = 50; % num
     
     % Place targets
-    if nrOfVisualTargetLocations > 1,
-        targets = centerN(visualFieldSize * targetRangeProportionOfVisualField, nrOfVisualTargetLocations);
-        targetBoundary = targets(end);
+    if dimensions.nrOfVisualTargetLocations > 1,
+        dimensions.targets = centerN(dimensions.visualFieldSize * dimensions.targetRangeProportionOfVisualField, dimensions.nrOfVisualTargetLocations);
+        dimensions.targetBoundary = dimensions.targets(end);
     else
-        targets = 0;
-        targetBoundary = 10;
+        dimensions.targets = 0;
+        dimensions.targetBoundary = 10;
     end
     
-    % targetBoundary = eccentricity of most extreme target in head space
+    % dimensions.targetBoundary = eccentricity of most extreme target in head space
     
     % Derive eye movement range is sufficiently confined to keep ANY
     % target on retina
-    eyePositionFieldSize = visualFieldSize - 2*targets(end)
-    leftMostEyePosition = -eyePositionFieldSize/2;
-    rightMostEyePosition = eyePositionFieldSize/2; 
+    dimensions.eyePositionFieldSize = dimensions.visualFieldSize - 2*dimensions.targets(end);
+    dimensions.leftMostEyePosition = -dimensions.eyePositionFieldSize/2;
+    dimensions.rightMostEyePosition = dimensions.eyePositionFieldSize/2; 
     
     % Retina
-    leftMostVisualPosition = -visualFieldSize/2;
-    rightMostVisualPosition = visualFieldSize/2;    
+    dimensions.leftMostVisualPosition = -dimensions.visualFieldSize/2;
+    dimensions.rightMostVisualPosition = dimensions.visualFieldSize/2;    
     
     % Place LIP preference in retinal/eye position domain
-    visualPreferences = centerDistance(visualFieldSize, visualPreferenceDistance);
-    eyePositionPreferences = centerDistance(eyePositionFieldSize, eyePositionPrefrerenceDistance);
+    dimensions.visualPreferences = centerDistance(dimensions.visualFieldSize, dimensions.visualPreferenceDistance);
+    dimensions.eyePositionPreferences = centerDistance(dimensions.eyePositionFieldSize, dimensions.eyePositionPrefrerenceDistance);
     
-    nrOfVisualPreferences = length(visualPreferences);
-    nrOfEyePositionPrefrerence = length(eyePositionPreferences);
+    dimensions.nrOfVisualPreferences = length(dimensions.visualPreferences);
+    dimensions.nrOfEyePositionPrefrerence = length(dimensions.eyePositionPreferences);
 end

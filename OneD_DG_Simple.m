@@ -23,9 +23,8 @@ function OneD_DG_Simple(stimuliName)
     end
     
     % Load enviromental paramters
-    [leftMostVisualPosition, rightMostVisualPosition, leftMostEyePosition, rightMostEyePosition, visualPreferences, eyePositionPreferences, nrOfVisualPreferences, nrOfEyePositionPrefrerence, targetBoundary] = OneD_DG_Dimensions()
-
-
+    dimensions = OneD_DG_Dimensions();
+    
     % Movement parameters
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
@@ -41,20 +40,18 @@ function OneD_DG_Simple(stimuliName)
     fileID = fopen(filename,'w');
 
     % Make header
-    numberOfSimultanousObjects = 1;
-
     fwrite(fileID, samplingRate, 'ushort');               % Rate of sampling
-    fwrite(fileID, numberOfSimultanousObjects, 'ushort'); % Number of simultanously visible targets, needed to parse data
-    fwrite(fileID, visualFieldSize, 'float');
-    fwrite(fileID, eyePositionFieldSize, 'float');
+    fwrite(fileID, dimensions.numberOfSimultanousObjects, 'ushort'); % Number of simultanously visible targets, needed to parse data
+    fwrite(fileID, dimensions.visualFieldSize, 'float');
+    fwrite(fileID, dimensions.eyePositionFieldSize, 'float');
    
     % Output data sequence for each target
-    for t = targets,
+    for t = dimensions.targets,
         
         % Dynamical quantities
         state = 0;                                      % 0 = fixating, 1 = saccading
         stateTimer = 0;                                 % the duration of the present state
-        eyePosition = leftMostEyePosition;              % Center on 0, start on left edge (e.g. -100 deg)
+        eyePosition = dimensions.leftMostEyePosition;              % Center on 0, start on left edge (e.g. -100 deg)
     
         % Save at t=0
         fwrite(fileID, eyePosition, 'float');           % Eye position (HFP)
@@ -79,7 +76,7 @@ function OneD_DG_Simple(stimuliName)
     cd(startDir);
     
     % Generate complementary testing data
-    OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionFieldSize);
+    OneD_DG_Test(stimuliName, dimensions.targetBoundary, dimensions.visualFieldSize, dimensions.eyePositionFieldSize);
     OneD_DG_TestOnTrained([stimuliName '_training']);
     
     % Generate correlation data
@@ -132,7 +129,7 @@ function OneD_DG_Simple(stimuliName)
             end
             
             % Output data point if we are still within visual field
-            if eyePosition < rightMostEyePosition,
+            if eyePosition < dimensions.rightMostEyePosition,
                 %disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]); % relationhip is t = r + e
                 fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
                 fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target

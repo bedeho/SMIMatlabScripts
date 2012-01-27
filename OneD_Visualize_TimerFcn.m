@@ -19,6 +19,11 @@ function OneD_Visualize_TimerFcn(obj, event)
     global timeStep;
     global fig;
     
+    global dimensions;
+    
+    %{
+    global sigmoidSlope;
+    global gaussianSigma;
     global eyePositionFieldSize;
     global visualFieldSize;
     global visualPreferences;
@@ -27,6 +32,7 @@ function OneD_Visualize_TimerFcn(obj, event)
     global rightMostEyePosition;
     global leftMostVisualPosition;
     global rightMostVisualPosition;
+    %}
     
     % Update time counter
     OneDVisualizeTimer = (lineCounter - nrOfObjectsFoundSoFar)*timeStep;
@@ -71,7 +77,7 @@ function OneD_Visualize_TimerFcn(obj, event)
     % draw LIP sig*gauss neurons and input space
     function draw()
         
-        v = OneD_DG_InputLayer(visualPreferences, eyePositionPreferences, [eyePosition retinalPositions]);
+        v = OneD_DG_InputLayer(dimensions.sigmoidSlope, dimensions.gaussianSigma, dimensions.visualPreferences, dimensions.eyePositionPreferences, [eyePosition retinalPositions]);
         
         % Clean up so that it is not hidden from us that stimuli is off
         % retina
@@ -82,7 +88,7 @@ function OneD_Visualize_TimerFcn(obj, event)
         % + sigmoid
         subplot(3,1,1);
         imagesc(sigmoidPositive);
-        daspect([eyePositionFieldSize visualFieldSize 1]);
+        daspect([dimensions.eyePositionFieldSize dimensions.visualFieldSize 1]);
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
         title(tickTitle);
@@ -90,7 +96,7 @@ function OneD_Visualize_TimerFcn(obj, event)
         % - sigmoid
         subplot(3,1,2);
         imagesc(sigmoidNegative);
-        daspect([eyePositionFieldSize visualFieldSize 1]);
+        daspect([dimensions.eyePositionFieldSize dimensions.visualFieldSize 1]);
         
         % input space
         subplot(3,1,3);
@@ -102,13 +108,13 @@ function OneD_Visualize_TimerFcn(obj, event)
         
         % plot
         rows = 1:(lineCounter - nrOfObjectsFoundSoFar);
-        for o = 1:numberOfSimultanousObjects,
+        for o = 1:dimensions.numberOfSimultanousObjects,
             plot(temp(rows, 1), temp(rows ,o + 1) , 'o');
             
             hold on;
         end
-        daspect([eyePositionFieldSize visualFieldSize 1]);
-        axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
+        daspect([dimensions.eyePositionFieldSize dimensions.visualFieldSize 1]);
+        axis([dimensions.leftMostEyePosition dimensions.rightMostEyePosition dimensions.leftMostVisualPosition dimensions.rightMostVisualPosition]);
         
         %x = eyePosition * ones(1, numberOfSimultanousObjects);
         %y = retinalPositions;
