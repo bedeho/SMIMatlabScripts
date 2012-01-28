@@ -11,36 +11,16 @@
 function OneD_Visualize(stimuliName)
   
     % Exporting
-    global OneDVisualizeTimeObject; 
+    global OneD_VisualizeTimeObject; 
     global buffer;                  
     global lineCounter;                          
     global nrOfObjectsFoundSoFar;
     global timeStep;
     global fig;
+    global numberOfSimultanousObjects;
 
     global dimensions;
     dimensions = OneD_DG_Dimensions();
-    
-    %{
-    global numberOfSimultanousObjects;
-    global eyePositionFieldSize;
-    global visualFieldSize;
-    global visualPreferences;
-    global eyePositionPreferences;
-    global leftMostEyePosition; 
-    global rightMostEyePosition;
-    global leftMostVisualPosition;
-    global rightMostVisualPosition;
-    
-    % Load dimensions
-    dimensions = OneD_DG_Dimensions();
-    visualPreferences = dimensions.visualPreferences;
-    eyePositionPreferences = dimensions.eyePositionPreferences;
-    leftMostEyePosition = dimensions.leftMostEyePosition;
-    rightMostEyePosition = dimensions.rightMostEyePosition;
-    leftMostVisualPosition = dimensions.leftMostVisualPosition;
-    rightMostVisualPosition = dimensions.rightMostVisualPosition;
-    %}
 
     % Load file
     [samplingRate, numberOfSimultanousObjects, visualFieldSize, eyePositionFieldSize, buffer] = OneD_Load(stimuliName);
@@ -53,12 +33,17 @@ function OneD_Visualize(stimuliName)
     timeStep = 1/samplingRate;                      % Derived
     period = timeStep / playAtPrcntOfOriginalSpeed; % Derived
     
+    %OneD_Visualize_TimerFcn('', '')
+     
+    
     % Setup timer
     % Good video on timers: http://blogs.mathworks.com/pick/2008/05/05/advanced-matlab-timer-objects/
-    OneDVisualizeTimeObject = timer('Period', period, 'ExecutionMode', 'fixedSpacing');
-    set(OneDVisualizeTimeObject, 'TimerFcn', {@OneDVisualize_TimerFcn});
-    set(OneDVisualizeTimeObject, 'StopFcn', {@OneDVisualize_StopFcn});
+    OneD_VisualizeTimeObject = timer('Period', period, 'ExecutionMode', 'fixedSpacing');
+    set(OneD_VisualizeTimeObject, 'TimerFcn', {@OneD_Visualize_TimerFcn});
+    set(OneD_VisualizeTimeObject, 'StopFcn', {@OneD_Visualize_StopFcn});
 
     % Start timer
-    start(OneDVisualizeTimeObject);
+    start(OneD_VisualizeTimeObject);
+    
+     
 end

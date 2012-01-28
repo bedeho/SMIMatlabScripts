@@ -10,7 +10,7 @@
 function OneD_Visualize_TimerFcn(obj, event)
 
     % Exporting
-    global OneDVisualizeTimeObject; % to expose it to make it stoppable in console
+    global OneD_VisualizeTimeObject; % to expose it to make it stoppable in console
 
     % Importing
     global buffer;
@@ -19,21 +19,12 @@ function OneD_Visualize_TimerFcn(obj, event)
     global timeStep;
     global fig;
     
+    global numberOfSimultanousObjects;
+    
     global dimensions;
     
-    %{
-    global sigmoidSlope;
-    global gaussianSigma;
-    global eyePositionFieldSize;
-    global visualFieldSize;
-    global visualPreferences;
-    global eyePositionPreferences;
-    global leftMostEyePosition; 
-    global rightMostEyePosition;
-    global leftMostVisualPosition;
-    global rightMostVisualPosition;
-    %}
-    
+    global tempspacetemp;
+        
     % Update time counter
     OneDVisualizeTimer = (lineCounter - nrOfObjectsFoundSoFar)*timeStep;
     total = uint64(OneDVisualizeTimer * 1000);
@@ -49,7 +40,7 @@ function OneD_Visualize_TimerFcn(obj, event)
     if lineCounter <= length(buffer),
         eyePosition = buffer(lineCounter, 1);
     else
-        stop(OneDVisualizeTimeObject);
+        stop(OneD_VisualizeTimeObject);
         return;
     end
     
@@ -76,14 +67,18 @@ function OneD_Visualize_TimerFcn(obj, event)
     
     % draw LIP sig*gauss neurons and input space
     function draw()
+
+        %disp('got here');
         
-        v = OneD_DG_InputLayer(dimensions.sigmoidSlope, dimensions.gaussianSigma, dimensions.visualPreferences, dimensions.eyePositionPreferences, [eyePosition retinalPositions]);
+        OneD_DG_InputLayer(dimensions, [eyePosition retinalPositions]);
+        
+        v = tempspacetemp;
         
         % Clean up so that it is not hidden from us that stimuli is off
         % retina
         v(v < 0.001) = 0;
-        sigmoidPositive = v(1,:,:);
-        sigmoidNegative = v(2,:,:);
+        sigmoidPositive = squeeze(v(1,:,:));
+        sigmoidNegative = squeeze(v(2,:,:));
         
         % + sigmoid
         subplot(3,1,1);
@@ -120,6 +115,8 @@ function OneD_Visualize_TimerFcn(obj, event)
         %y = retinalPositions;
         %plot(x, y,'r*');
         %axis([leftMostEyePosition rightMostEyePosition leftMostVisualPosition rightMostVisualPosition]);
+        
+        %}
     end
 
 end

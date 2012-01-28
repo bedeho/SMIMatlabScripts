@@ -8,7 +8,7 @@
 
 function stopVisualizer()
 
-    global OneDVisualizeTimeObject;
+    global OneD_VisualizeTimeObject;
     
-    stop(OneDVisualizeTimeObject);
+    stop(OneD_VisualizeTimeObject);
 end

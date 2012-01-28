@@ -14,7 +14,7 @@ function OneD_DG_Correlation(stimuliName)
     global base;
     
     % Generate correlation data
-    dimensions = OneD_DG_Dimensions()
+    dimensions = OneD_DG_Dimensions();
     
     global tempspacetemp; % Export to OneD_DG_InputLayer
     
@@ -53,8 +53,14 @@ function OneD_DG_Correlation(stimuliName)
     
     imagesc(dotproduct);
     
-    str = [base 'Stimuli/' stimuliName '/correlation'];
+    % Save correlation
+    startDir = pwd;
+    cd([base 'Stimuli/' stimuliName]);
     
-    save str dotproduct; 
+    save dotproduct; 
+
+    cd(startDir);
+    
+
 
 end
