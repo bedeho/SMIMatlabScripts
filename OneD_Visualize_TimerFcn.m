@@ -22,8 +22,6 @@ function OneD_Visualize_TimerFcn(obj, event)
     global numberOfSimultanousObjects;
     
     global dimensions;
-    
-    global tempspacetemp;
         
     % Update time counter
     OneDVisualizeTimer = (lineCounter - nrOfObjectsFoundSoFar)*timeStep;
@@ -70,9 +68,7 @@ function OneD_Visualize_TimerFcn(obj, event)
 
         %disp('got here');
         
-        OneD_DG_InputLayer(dimensions, [eyePosition retinalPositions]);
-        
-        v = tempspacetemp;
+        v = OneD_DG_InputLayer(dimensions, [eyePosition retinalPositions]);
         
         % Clean up so that it is not hidden from us that stimuli is off
         % retina

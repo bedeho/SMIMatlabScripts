@@ -6,10 +6,10 @@
 %  Copyright 2012 OFTNAI. All rights reserved.
 %
 
-function OneD_DG_InputLayer(dimensions, pattern)
+function v = OneD_DG_InputLayer(dimensions, pattern)
 
-    % Import
-    global tempspacetemp;
+    % Allocate space
+    v = zeros(2, dimensions.nrOfVisualPreferences, dimensions.nrOfEyePositionPrefrerence);
 
     % v(1,x,y) - sigmoid positive
     % v(2,x,y) - sigmoid negative
@@ -27,12 +27,12 @@ function OneD_DG_InputLayer(dimensions, pattern)
             e = dimensions.eyePositionPreferences(j);
 
             % visual component
-            tempspacetemp(1,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
-            tempspacetemp(2,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
+            v(1,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
+            v(2,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
 
             % eye modulation
-            tempspacetemp(1,i,j) = tempspacetemp(1,i,j) * 1/(1 + exp(dimensions.sigmoidSlope * (eyePosition - e))); % positive slope
-            tempspacetemp(2,i,j) = tempspacetemp(2,i,j) * 1/(1 + exp(-1 * dimensions.sigmoidSlope * (eyePosition - e))); % negative slope
+            v(1,i,j) = v(1,i,j) * 1/(1 + exp(dimensions.sigmoidSlope * (eyePosition - e))); % positive slope
+            v(2,i,j) = v(2,i,j) * 1/(1 + exp(-1 * dimensions.sigmoidSlope * (eyePosition - e))); % negative slope
         end
     end
            

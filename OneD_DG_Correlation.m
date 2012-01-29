@@ -16,8 +16,6 @@ function OneD_DG_Correlation(stimuliName)
     % Generate correlation data
     dimensions = OneD_DG_Dimensions();
     
-    global tempspacetemp; % Export to OneD_DG_InputLayer
-    
     % Allocate space, is reused
     tempspacetemp = zeros(2, dimensions.nrOfVisualPreferences, dimensions.nrOfEyePositionPrefrerence);
 
@@ -38,11 +36,8 @@ function OneD_DG_Correlation(stimuliName)
             pattern1 = tmp1(1,:);
             pattern2 = tmp2(1,:);
             
-            OneD_DG_InputLayer(dimensions, pattern1);
-            v1 = tempspacetemp;
-            
-            OneD_DG_InputLayer(dimensions, pattern2);
-            v2 = tempspacetemp;
+            v1 = OneD_DG_InputLayer(dimensions, pattern1);
+            v2 = OneD_DG_InputLayer(dimensions, pattern2);
             
             % Normalized dot product
             dotproduct(o1,o2) = dot(v1(:),v2(:)) / (norm(v1(:)) * norm(v2(:)));
