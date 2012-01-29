@@ -28,9 +28,6 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     nrOfEyePositions            = 4;
     samplingRate                = 10;	% (Hz)
     fixationDuration            = 0.2;	% (s) - fixation period after each saccade
-
-    % non-Elmsley
-    %visualFieldSize = 200 % Entire visual field (rougly 100 per eye), (deg)
     
     % Derived
     timeStep                    = 1/samplingRate;
@@ -76,6 +73,12 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     if status,
         error(['Could not create xgridPayload.tbz' result]);
     end
+    
+    % Save stats
+    info.nrOfEyePositionsInTesting = nrOfEyePositions;
+    info.testingStyle = 'stdTest';
+    save info;
+
     cd(startDir);
     
 end

@@ -2,60 +2,48 @@
 %  regionOrthogonality.m
 %  SMI
 %
-%  Created by Bedeho Mender on 15/11/11.
-%  Copyright 2011 OFTNAI. All rights reserved.
+%  Created by Bedeho Mender on 28/11/12.
+%  Copyright 2012 OFTNAI. All rights reserved.
 %
 
-function [regionCorrelation] = regionOrthogonality(filename, nrOfEyePositionsInTesting)
+function [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrthogonality(filename, nrOfEyePositionsInTesting, dotproduct, region)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
+    y_dimension = networkDimensions(region).y_dimension;
+    x_dimension = networkDimensions(region).x_dimension;
+    
     % Load data
     [data, objectsPrEyePosition] = regionDataPrEyePosition(filename, nrOfEyePositionsInTesting);
     
-    % Setup vars
-    numRegions = length(networkDimensions);
-    regionCorrelation = cell(numRegions-1,1);
+    dataPrEyePosition = data{region-1,1}; % (object, eye_position, row, col, region)
     
-    % Compute correlation for each region
-    for r=2:numRegions,
+    objectsFound = (objectsPrEyePosition * nrOfEyePositionsInTesting);
+    
+    objectified = reshape(dataPrEyePosition, [objectsFound y_dimension x_dimension]); % (objectified row col)
+    
+    dotproduct2 = zeros(objectsFound, objectsFound);
+    
+    % Iterate all output patterns
+    for o1 = 1:objectsFound,
         
-        dataPrEyePosition = data{r-1,1};
-        
-        y_dimension = networkDimensions(r).y_dimension;
-        x_dimension = networkDimensions(r).x_dimension;
-        regionCorrelation{r-1} = zeros(y_dimension, x_dimension);
-        
-        % Compute correlation for each cell
-        for row = 1:y_dimension,
-            for col = 1:x_dimension,
+        o1
+        for o2 = 1:objectsFound,
+            
+            % Pick output patterns
+            v1 = squeeze(objectified(o1, :, :));
+            v2 = squeeze(objectified(o2, :, :));
+            
+            % Normalized dot product
+            dotproduct2(o1,o2) = dot(v1(:),v2(:)) / (norm(v1(:)) * norm(v2(:)));
 
-                corr = 0;
-
-                for eyePosition = 1:(nrOfEyePositionsInTesting - 1),
-
-                    observationMatrix = [dataPrEyePosition(:, eyePosition,row,col) dataPrEyePosition(:, eyePosition+1,row,col)];
-
-                    if isConstant(observationMatrix(:, 1)) || isConstant(observationMatrix(:, 2)),
-                        c = 0; % uncorrelated
-                    else
-
-                        % correlation
-                        correlationMatrix = corrcoef(observationMatrix);
-                        c = correlationMatrix(1,2); % pick one of the two identical non-diagonal element :)
-
-                    end
-
-                    corr = corr + c;
-                end
-
-                regionCorrelation{r-1}(row, col) = corr / (nrOfEyePositionsInTesting - 1); % average correlation
-            end
         end
     end
     
-    function [test] = isConstant(arr)
-        
-        test = isequal(arr(1) * ones(length(arr),1), arr);
+    % Column wise vectorization
+    outputCorrelations = dotproduct2(:);
+    inputCorrelations = dotproduct(:); 
     
+    % Return values
+    orthogonalityIndex = mean(outputCorrelations)/mean(inputCorrelations);

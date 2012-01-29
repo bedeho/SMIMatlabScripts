@@ -73,6 +73,10 @@ function OneD_DG_Simple(stimuliName)
     if status,
         error(['Could not create xgridPayload.tbz' result]);
     end
+    
+    % Save dimensions used
+    save('dimensions.mat','dimensions');
+    
     cd(startDir);
     
     % Generate complementary testing data

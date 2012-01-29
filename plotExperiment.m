@@ -7,7 +7,7 @@
 %
 %  Purpose: Create summary of parameter search
 
-function plotExperiment(experiment, nrOfEyePositionsInTesting)
+function plotExperiment(experiment, stimuliName)
 
     % Import global variables
     declareGlobalVars();
@@ -19,6 +19,18 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     
     % Iterate simulations in this experiment folder
     listing = dir(experimentFolder); 
+    
+    % Load stimuli
+    startDir = pwd;
+    cd([base 'Stimuli/' stimuliName]);
+    
+    C = load('info.mat');
+    info = C.info;
+    
+    C = load('dotproduct.mat'); 
+    dotproduct = C.dotproduct;
+    
+    cd(startDir);
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Find an example of simulation directory to extract column names- HORRIBLY CODED
@@ -63,10 +75,12 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
     fprintf(fileID, '<th>Name</th>');
     fprintf(fileID, '<th>Network</th>');
     fprintf(fileID, '<th>Result</th>');
+    fprintf(fileID, '<th>Result 2</th>');
     for p = 1:nrOfParams,
         fprintf(fileID, ['<th>' parameters{p,1} '</th>']);
     end
     fprintf(fileID, '<th>#</th>');
+    fprintf(fileID, '<th>Index</th>');
     fprintf(fileID, '<th>Action</th>');
     fprintf(fileID, '</tr></thead>');
     
@@ -89,7 +103,7 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
             disp(['******** Doing ' num2str(counter) ' out of ' num2str((nnz([listing(:).isdir]) - 2)) '********']); 
             counter = counter + 1;
             
-            summary = plotSimulation(experiment, simulation, nrOfEyePositionsInTesting);
+            summary = plotSimulation(experiment, simulation, info, dotproduct);
 
             for s=1:length(summary),
                 
@@ -104,9 +118,12 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                     % Network
                     fprintf(fileID, '<td> %s </td>\n', summary(s).directory);
                     
-                    % Result
+                    % Result 1
                     fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/result_1.png']);
-                     
+                    
+                    % Result 2
+                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/orthogonality.png']);
+                    
                     % Parameters
                     parameters = getParameters(simulation);
                     
@@ -119,13 +136,20 @@ function plotExperiment(experiment, nrOfEyePositionsInTesting)
                     else    
                         fprintf(fileID, '<td> %d </td>\n', summary(s).nrOfHeadCenteredCells);
                     end
-                        
+                    
+                    % Orthoganlity Index
+                    if summary(s).orthogonalityIndex < 1,
+                        fprintf(fileID, '<td style=''background-color:green;''> %d </td>\n', summary(s).orthogonalityIndex);
+                    else    
+                        fprintf(fileID, '<td> %d </td>\n', summary(s).orthogonalityIndex);
+                    end
+                    
                     % Action
                     fprintf(fileID, '<td>\n');
                     outputButton('Figure', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
-                    outputButton('Response', ['matlab:inspectResponse(\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']);
-                    outputButton('Weights', ['matlab:inspectWeights(\\''' netDir '/' summary(s).directory '.txt\\'',\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']);
-                    outputButton('Representation', ['matlab:inspectRepresentation(\\''' netDir '/firingRate.dat\\'',' num2str(nrOfEyePositionsInTesting) ')']); 
+                    outputButton('Response', ['matlab:inspectResponse(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
+                    outputButton('Weights', ['matlab:inspectWeights(\\''' netDir '/' summary(s).directory '.txt\\'',\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
+                    outputButton('Representation', ['matlab:inspectRepresentation(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']); 
                     outputButton('Firing', ['matlab:plotNetworkHistory(\\''' netDir '/firingRate.dat\\'')']); 
                     outputButton('Activation', ['matlab:plotNetworkHistory(\\''' netDir '/activation.dat\\'')']);
                     outputButton('IActivation', ['matlab:plotNetworkHistory(\\''' netDir '/inhibitedActivation.dat\\'')']);

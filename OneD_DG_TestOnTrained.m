@@ -86,9 +86,6 @@ function OneD_DG_TestOnTrained(stimuliName)
        end
     end
     
-    %% not nrofeyepositions, its the other one
-    %%nrOfCleanedUpPointsFound
-    
     % Close file
     fclose(fileID);
     
@@ -99,6 +96,12 @@ function OneD_DG_TestOnTrained(stimuliName)
     if status,
         error(['Could not create xgridPayload.tbz' result]);
     end
+    
+    % Save stats
+    info.nrOfEyePositionsInTesting = objectsFound;
+    info.testingStyle = 'testOnTrained';
+    save('info.mat','info');
+    
     cd(startDir);
     
     function data = linearInterpolate(samples)

@@ -6,16 +6,16 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsInTesting, region, depth)
+function [orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot, corr] = plotRegion(filename, info, dotproduct, region, depth)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
     
     % Fill in missing arguments    
-    if nargin < 4,
+    if nargin < 5,
         depth = 1;                                  % pick top layer
         
-        if nargin < 3,
+        if nargin < 4,
             region = length(networkDimensions);     % pick last region
         end
     end
@@ -25,9 +25,25 @@ function [regionCorrelationPlot, corr] = plotRegion(filename, nrOfEyePositionsIn
     end
     
     % Compute region correlation
-    corr = regionCorrelation(filename, nrOfEyePositionsInTesting);
+    corr = regionCorrelation(filename, info.nrOfEyePositionsInTesting);
     
     % Plot region correlation
     regionCorrelationPlot = figure();
     imagesc(corr{region-1});
     colorbar;
+
+    % Multiple indexes
+    regionOrthogonalizationPlot = figure();
+    
+    % Compute orthogonalization
+    [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrthogonality(filename, info.nrOfEyePositionsInTesting, dotproduct, region);
+        
+    scatter(inputCorrelations,outputCorrelations);
+    xlabel('Input Correlations');
+    ylabel('Output Correlations');
+
+        
+    end
+    
+    
+    

@@ -44,10 +44,9 @@ function OneD_DG_Correlation(stimuliName)
             OneD_DG_InputLayer(dimensions, pattern2);
             v2 = tempspacetemp;
             
-            dotproduct(o1,o2) = dot(v1(:),v2(:));
-            
-            %%/ normalize
-            
+            % Normalized dot product
+            dotproduct(o1,o2) = dot(v1(:),v2(:)) / (norm(v1(:)) * norm(v2(:)));
+
         end
     end
     
@@ -56,11 +55,7 @@ function OneD_DG_Correlation(stimuliName)
     % Save correlation
     startDir = pwd;
     cd([base 'Stimuli/' stimuliName]);
-    
     save dotproduct; 
-
     cd(startDir);
     
-
-
 end
