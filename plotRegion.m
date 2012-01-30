@@ -1,4 +1,4 @@
-%
+
 %  plotRegion.m
 %  SMI
 %
@@ -41,6 +41,9 @@ function [orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot
     scatter(inputCorrelations,outputCorrelations);
     xlabel('Input Correlations');
     ylabel('Output Correlations');
+    
+    axis([-0.1 1.1 -0.1 1.1]);
+    line([0,1],[0,1], 'linewidth',1,'color',[1,0,0]);
 
         
     end

@@ -37,13 +37,23 @@ function [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrt
             
             % Normalized dot product
             dotproduct2(o1,o2) = dot(v1(:),v2(:)) / (norm(v1(:)) * norm(v2(:)));
+            
+            % RESET SELF CORRELATIONS
+            if o1 == o2,
+                dotproduct2(o1,o2) = -1;
+                dotproduct(o1,o2) = -1;
+            end
 
         end
     end
     
     % Column wise vectorization
     outputCorrelations = dotproduct2(:);
-    inputCorrelations = dotproduct(:); 
+    inputCorrelations = dotproduct(:);
+    
+    % Remove selfcorrelations
+    outputCorrelations(outputCorrelations == -1) = [];
+    inputCorrelations(inputCorrelations == -1) = [];
     
     % Return values
     orthogonalityIndex = mean(outputCorrelations)/mean(inputCorrelations);
