@@ -37,7 +37,7 @@ function plotExperiment(experiment, stimuliName)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for d = 1:length(listing),
 
-        simulation = listing(d).name;
+        simulation = listing(d).name
 
         if listing(d).isdir && ~any(strcmp(simulation, {'Filtered', 'Images', '.', '..'})),
             [parameters, nrOfParams] = getParameters(simulation);

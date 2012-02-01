@@ -76,9 +76,11 @@ function OneD_Visualize_TimerFcn(obj, event)
         sigmoidPositive = squeeze(v(1,:,:));
         sigmoidNegative = squeeze(v(2,:,:));
         
+        fullNorm = norm([sigmoidPositive(:); sigmoidNegative(:)])
+        
         % + sigmoid
         subplot(3,1,1);
-        imagesc(sigmoidPositive);
+        imagesc(sigmoidPositive/fullNorm);
         daspect([dimensions.eyePositionFieldSize dimensions.visualFieldSize 1]);
         
         tickTitle = [sprintf('%02d', fullMin) ':' sprintf('%02d', fullSec) ':' sprintf('%03d',fullMs)];
@@ -86,7 +88,7 @@ function OneD_Visualize_TimerFcn(obj, event)
         
         % - sigmoid
         subplot(3,1,2);
-        imagesc(sigmoidNegative);
+        imagesc(sigmoidNegative/fullNorm);
         daspect([dimensions.eyePositionFieldSize dimensions.visualFieldSize 1]);
         
         % input space
