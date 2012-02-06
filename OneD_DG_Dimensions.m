@@ -26,7 +26,7 @@ function dimensions = OneD_DG_Dimensions()
     dimensions.visualPreferenceDistance = 2;
     dimensions.eyePositionPrefrerenceDistance = 1;
     dimensions.gaussianSigma = 6; % deg
-    dimensions.sigmoidSlope = 1; % num
+    dimensions.sigmoidSlope = 0; % (1/8)/2; % num
     
     % Place targets
     if dimensions.nrOfVisualTargetLocations > 1,

@@ -44,6 +44,9 @@ function [orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot
     
     axis([-0.1 1.1 -0.1 1.1]);
     line([0,1],[0,1], 'linewidth',1,'color',[1,0,0]);
+    
+    % Invariance & Selectivity
+    
 
         
     end
