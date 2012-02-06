@@ -47,7 +47,10 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         % Histogram
         axisVals(r-1,2) = subplot(numRegions, 2, 2*(r-2) + 2); % Simon model
-        hist(v2(:),0:(max(max(v2))));
+        noZeros = v2(:);
+        noZeros(noZeros == 0) = [];
+        
+        hist(noZeros,1:(max(max(v2))));
         title(['Mean: ' num2str(mean2(v2))]);
         
         % Setup callback
