@@ -6,7 +6,7 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot, corr] = plotRegion(filename, info, dotproduct, region, depth)
+function [MeanObjects, MeanTransforms, orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot, corr] = plotRegion(filename, info, dotproduct, region, depth)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
@@ -46,9 +46,8 @@ function [orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot
     line([0,1],[0,1], 'linewidth',1,'color',[1,0,0]);
     
     % Invariance & Selectivity
-    
+    [MeanObjects, MeanTransforms] = regionTrace(filename, info.nrOfEyePositionsInTesting);
 
-        
     end
     
     

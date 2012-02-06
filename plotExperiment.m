@@ -79,8 +79,10 @@ function plotExperiment(experiment, stimuliName)
     for p = 1:nrOfParams,
         fprintf(fileID, ['<th>' parameters{p,1} '</th>']);
     end
-    fprintf(fileID, '<th>#</th>');
-    fprintf(fileID, '<th>Index</th>');
+    fprintf(fileID, '<th>#nrOfHeadCenteredCells</th>');
+    fprintf(fileID, '<th>orthogonalityIndex</th>');
+    fprintf(fileID, '<th>MeanObjects</th>');
+    fprintf(fileID, '<th>MeanTransforms</th>');
     fprintf(fileID, '<th>Action</th>');
     fprintf(fileID, '</tr></thead>');
     
@@ -142,6 +144,20 @@ function plotExperiment(experiment, stimuliName)
                         fprintf(fileID, '<td style=''background-color:green;''> %d </td>\n', summary(s).orthogonalityIndex);
                     else    
                         fprintf(fileID, '<td> %d </td>\n', summary(s).orthogonalityIndex);
+                    end
+                    
+                    % MeanObjects
+                    if summary(s).MeanObjects < 2,
+                        fprintf(fileID, '<td style=''background-color:yellow;''> %d </td>\n', summary(s).MeanObjects);
+                    else    
+                        fprintf(fileID, '<td> %d </td>\n', summary(s).MeanObjects);
+                    end
+                    
+                    % Orthoganlity Index
+                    if summary(s).MeanTransforms > 1,
+                        fprintf(fileID, '<td style=''background-color:blue;''> %d </td>\n', summary(s).MeanTransforms);
+                    else    
+                        fprintf(fileID, '<td> %d </td>\n', summary(s).MeanTransforms);
                     end
                     
                     % Action
