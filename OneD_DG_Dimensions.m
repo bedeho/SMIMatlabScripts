@@ -9,7 +9,7 @@
 function dimensions = OneD_DG_Dimensions()
 
     % Stimuli
-    dimensions.nrOfVisualTargetLocations  = 4;
+    dimensions.nrOfVisualTargetLocations  = 8;
     dimensions.numberOfSimultanousObjects = 1;
     
     % Enviroment (non-Elmsley)
@@ -25,8 +25,8 @@ function dimensions = OneD_DG_Dimensions()
     % LIP Parameters
     dimensions.visualPreferenceDistance = 6;
     dimensions.eyePositionPrefrerenceDistance = 6;
-    dimensions.gaussianSigma = 6; % deg
-    dimensions.sigmoidSlope = 10; % (1/8)/2; % num
+    dimensions.gaussianSigma = 1; % deg
+    dimensions.sigmoidSlope = (1/8)/2; % (1/8)/2; % num
     
     % Place targets
     if dimensions.nrOfVisualTargetLocations > 1,

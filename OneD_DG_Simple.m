@@ -22,13 +22,21 @@ function OneD_DG_Simple()
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 10;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
+    saccadeAmplitude            = 40;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     
-    encodePrefix = ['fD=' num2str(fixationDuration,'%.2f') '-vpD=' num2str(dimensions.visualPreferenceDistance,'%.2f') '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance,'%.2f') '-gS=' num2str(dimensions.gaussianSigma,'%.2f') '-sS=' num2str(dimensions.sigmoidSlope,'%.2f')];
+    % No multiline concat... damn
+    encodePrefix = '';
+    encodePrefix = [encodePrefix 'fD=' num2str(fixationDuration,'%.2f') ];
+    encodePrefix = [encodePrefix '-vpD=' num2str(dimensions.visualPreferenceDistance,'%.2f')];
+    encodePrefix = [encodePrefix '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance,'%.2f')];
+    encodePrefix = [encodePrefix '-gS=' num2str(dimensions.gaussianSigma,'%.2f')];
+    encodePrefix = [encodePrefix '-sS=' num2str(dimensions.sigmoidSlope,'%.2f')];
+    encodePrefix = [encodePrefix '-vF=' num2str(dimensions.visualFieldSize,'%.2f')];
+    encodePrefix = [encodePrefix '-eF=' num2str(dimensions.eyePositionFieldSize,'%.2f')];
     tSFolderName = ['simple-' encodePrefix];
     
     tSPath = [base 'Stimuli/' tSFolderName '-training'];
