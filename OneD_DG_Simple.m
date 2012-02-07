@@ -28,7 +28,7 @@ function OneD_DG_Simple()
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     
-    encodePrefix = ['fD=' num2str(fixationDuration) '-vpD=' num2str(dimensions.visualPreferenceDistance) '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance) '-gS=' num2str(dimensions.gaussianSigma) '-sS=' num2str(dimensions.sigmoidSlope)];
+    encodePrefix = ['fD=' num2str(fixationDuration,'%.2f') '-vpD=' num2str(dimensions.visualPreferenceDistance,'%.2f') '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance,'%.2f') '-gS=' num2str(dimensions.gaussianSigma,'%.2f') '-sS=' num2str(dimensions.sigmoidSlope,'%.2f')];
     tSFolderName = ['simple-' encodePrefix];
     
     tSPath = [base 'Stimuli/' tSFolderName '-training'];
