@@ -6,7 +6,7 @@
 %  Copyright 2012 OFTNAI. All rights reserved.
 %
 
-function [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrthogonality(filename, nrOfEyePositionsInTesting, dotproduct, region)
+function [outputPatterns,orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrthogonality(filename, nrOfEyePositionsInTesting, dotproduct, region)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
@@ -24,6 +24,7 @@ function [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrt
     objectified = reshape(dataPrEyePosition, [objectsFound y_dimension x_dimension]); % (objectified row col)
     
     dotproduct2 = zeros(objectsFound, objectsFound);
+    outputPatterns = zeros(objectsFound, objectsFound);
     
     % Iterate all output patterns
     for o1 = 1:objectsFound,
@@ -37,6 +38,7 @@ function [orthogonalityIndex, inputCorrelations, outputCorrelations] = regionOrt
             
             % Normalized dot product
             dotproduct2(o1,o2) = dot(v1(:),v2(:)) / (norm(v1(:)) * norm(v2(:)));
+            outputPatterns(o1,o2) = dotproduct2(o1,o2);
             
             % RESET SELF CORRELATIONS
             if o1 == o2,

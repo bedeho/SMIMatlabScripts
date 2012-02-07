@@ -8,20 +8,13 @@
 %  Purpose: Generates the simplest possible 1d dynamical data
 %
 
-function OneD_DG_Simple(stimuliName)
+function OneD_DG_Simple()
 
     % Import global variables
     declareGlobalVars();
     
     global base;
 
-    stimuliFolder = [base 'Stimuli/' stimuliName '_training'];
-    
-    % Make folder
-    if ~isdir(stimuliFolder),
-        mkdir(stimuliFolder);
-    end
-    
     % Load enviromental paramters
     dimensions = OneD_DG_Dimensions();
     
@@ -29,14 +22,24 @@ function OneD_DG_Simple(stimuliName)
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 30;    % (deg) - angular magnitude of each saccade, after which there is a fixation periode
-    
+    saccadeAmplitude            = 10;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
+
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     
+    encodePrefix = ['fD=' num2str(fixationDuration) '-vpD=' num2str(dimensions.visualPreferenceDistance) '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance) '-gS=' num2str(dimensions.gaussianSigma) '-sS=' num2str(dimensions.sigmoidSlope)];
+    tSFolderName = ['simple-' encodePrefix];
+    
+    tSPath = [base 'Stimuli/' tSFolderName '-training'];
+    
+    % Make folder
+    if ~isdir(tSPath),
+        mkdir(tSPath);
+    end
+    
     % Open file
-    filename = [stimuliFolder '/data.dat'];
+    filename = [tSPath '/data.dat'];
     fileID = fopen(filename,'w');
 
     % Make header
@@ -68,7 +71,7 @@ function OneD_DG_Simple(stimuliName)
     
     % Create payload for xgrid
     startDir = pwd;
-    cd(stimuliFolder);
+    cd(tSPath);
     [status, result] = system('tar -cjvf xgridPayload.tbz data.dat');
     if status,
         error(['Could not create xgridPayload.tbz' result]);
@@ -80,14 +83,14 @@ function OneD_DG_Simple(stimuliName)
     cd(startDir);
     
     % Generate complementary testing data
-    OneD_DG_Test(stimuliName, dimensions.targetBoundary, dimensions.visualFieldSize, dimensions.eyePositionFieldSize);
-    OneD_DG_TestOnTrained([stimuliName '_training']);
+    OneD_DG_Test(tSFolderName, dimensions.targetBoundary, dimensions.visualFieldSize, dimensions.eyePositionFieldSize);
+    OneD_DG_TestOnTrained([tSFolderName '-training']);
     
     % Generate correlation data
-    OneD_DG_Correlation([stimuliName '_testOnTrained']);
+    OneD_DG_Correlation([tSFolderName '-testOnTrained']);
     
     % Visualize
-    OneD_Overlay([stimuliName '_training'],[stimuliName '_testOnTrained'])
+    OneD_Overlay([tSFolderName '-training'],[tSFolderName '-testOnTrained'])
     
     function doTimeSteps()
 

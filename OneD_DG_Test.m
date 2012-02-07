@@ -16,7 +16,7 @@ function OneD_DG_Test(stimuliName, targetBoundary, visualFieldSize, eyePositionF
     global base;
 
     % Make folder
-    stimuliFolder = [base 'Stimuli/' stimuliName '_stdTest'];
+    stimuliFolder = [base 'Stimuli/' stimuliName '-stdTest'];
     
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);

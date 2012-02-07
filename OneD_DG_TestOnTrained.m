@@ -22,8 +22,9 @@ function OneD_DG_TestOnTrained(stimuliName)
     simulatorTimeStepSize = 0.1*0.5
     
     % Make folder
-    str = strsplit(stimuliName,'_');
-    stimuliFolder = [base 'Stimuli/' char(str{1}) '_testOnTrained'];
+    %str = strsplit(stimuliName,'-');
+    str = strrep(stimuliName, '-training', '')
+    stimuliFolder = [base 'Stimuli/' str '-testOnTrained'];
     if ~isdir(stimuliFolder),
         mkdir(stimuliFolder);
     end

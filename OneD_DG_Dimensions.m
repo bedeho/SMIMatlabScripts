@@ -23,10 +23,10 @@ function dimensions = OneD_DG_Dimensions()
     % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
 
     % LIP Parameters
-    dimensions.visualPreferenceDistance = 2;
-    dimensions.eyePositionPrefrerenceDistance = 1;
+    dimensions.visualPreferenceDistance = 6;
+    dimensions.eyePositionPrefrerenceDistance = 6;
     dimensions.gaussianSigma = 6; % deg
-    dimensions.sigmoidSlope = 0; % (1/8)/2; % num
+    dimensions.sigmoidSlope = 10; % (1/8)/2; % num
     
     % Place targets
     if dimensions.nrOfVisualTargetLocations > 1,

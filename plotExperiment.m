@@ -162,7 +162,8 @@ function plotExperiment(experiment, stimuliName)
                     
                     % Action
                     fprintf(fileID, '<td>\n');
-                    outputButton('Figure', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
+                    outputButton('Correlation', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
+                    outputButton('Output Orthogonalization', ['matlab:open(\\''' netDir '/outputOrthogonality.fig\\'')']);
                     outputButton('Response', ['matlab:inspectResponse(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
                     outputButton('Weights', ['matlab:inspectWeights(\\''' netDir '/' summary(s).directory '.txt\\'',\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
                     outputButton('Representation', ['matlab:inspectRepresentation(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']); 
