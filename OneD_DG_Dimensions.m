@@ -9,10 +9,10 @@
 function dimensions = OneD_DG_Dimensions()
 
     % Stimuli
-    dimensions.nrOfVisualTargetLocations  = 8;
+    dimensions.nrOfVisualTargetLocations  = 4;
     dimensions.numberOfSimultanousObjects = 1;
     
-    % Enviroment (non-Elmsley)
+    % Enviroment (non-Elmsley) 
     dimensions.visualFieldSize             = 200; % Entire visual field (rougly 100 per eye), (deg)
     dimensions.targetRangeProportionOfVisualField = 0.5;
     
@@ -23,10 +23,18 @@ function dimensions = OneD_DG_Dimensions()
     % OnScreenTargetSpacing     = ;     % On screen target distance (meters)
 
     % LIP Parameters
-    dimensions.visualPreferenceDistance = 6;
+    
+    % Sejnowski:   8,6,8,1/16
+    dimensions.visualPreferenceDistance = 8;
     dimensions.eyePositionPrefrerenceDistance = 6;
-    dimensions.gaussianSigma = 1; % deg
-    dimensions.sigmoidSlope = (1/8)/2; % (1/8)/2; % num
+    dimensions.gaussianSigma = 8; % deg
+    dimensions.sigmoidSlope = 1/16; % (1/8)/2; % num
+    
+    % My classics: 1,2,2,10
+    %dimensions.visualPreferenceDistance = 1;
+    %dimensions.eyePositionPrefrerenceDistance = 2;
+    %dimensions.gaussianSigma = 2; % deg
+    %dimensions.sigmoidSlope = 10; % (1/8)/2; % num
     
     % Place targets
     if dimensions.nrOfVisualTargetLocations > 1,

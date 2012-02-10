@@ -70,7 +70,7 @@ function OneD_DG_TestOnTrained(stimuliName)
         x = length(cleanedUp);
         
         if o > 1 && nrOfCleanedUpPointsFound ~= x,
-            error('Number of cleaned up points vary');
+            warning('Number of cleaned up points vary');
         end
         
         nrOfCleanedUpPointsFound = x;

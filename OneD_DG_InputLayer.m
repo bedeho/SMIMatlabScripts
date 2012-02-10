@@ -30,9 +30,14 @@ function v = OneD_DG_InputLayer(dimensions, pattern)
             v(1,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
             v(2,i,j) = exp(-(retinalPositions - x).^2/(2*dimensions.gaussianSigma^2));
 
-            % eye modulation
+            % SIGMOID eye modulation
             v(1,i,j) = v(1,i,j) * 1/(1 + exp(dimensions.sigmoidSlope * (eyePosition - e))); % positive slope
             v(2,i,j) = v(2,i,j) * 1/(1 + exp(-1 * dimensions.sigmoidSlope * (eyePosition - e))); % negative slope
+        
+            % GAUSSIAN eye modulation
+            %v(1,i,j) = v(1,i,j) * exp(-(eyePosition - e).^2/(2*dimensions.gaussianSigma^2)); % positive slope
+            %v(2,i,j) = v(2,i,j) * exp(-(eyePosition - e).^2/(2*dimensions.gaussianSigma^2)); % negative slope
+
         end
     end
            

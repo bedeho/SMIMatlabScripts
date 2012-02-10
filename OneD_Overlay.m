@@ -71,7 +71,7 @@ function OneD_Overlay(trainingStimuliName, testingStimuliName)
         totalTimePerObject = (minSequenceLength-1) * timeStep;
         
         % Plot spatial data
-        markerSpecifiers = {'r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx'};
+        markerSpecifiers = {'r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','r+', 'g.', 'bx', 'cs', 'md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx','md', 'y^', 'kv', 'w>', 'r+', 'g.', 'bx'};
         for o = 1:objectsFound,
             
             tmp = objects{o};

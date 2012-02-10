@@ -8,7 +8,7 @@
 %  Purpose: Generates the simplest possible 1d dynamical data
 %
 
-function OneD_DG_Simple()
+function OneD_DG_Simple(prefix)
 
     % Import global variables
     declareGlobalVars();
@@ -22,15 +22,22 @@ function OneD_DG_Simple()
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 40;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
+    saccadeAmplitude            = 60;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Derived
     timeStep = 1/samplingRate;
     saccadeDuration = saccadeAmplitude/saccadeVelocity;
     
     % No multiline concat... damn
-    encodePrefix = '';
+    if nargin < 1,
+        prefix = '';
+    else
+        prefix = [prefix '-']
+    end
+    
+    encodePrefix = prefix;
     encodePrefix = [encodePrefix 'fD=' num2str(fixationDuration,'%.2f') ];
+    encodePrefix = [encodePrefix '-sA=' num2str(saccadeAmplitude,'%.2f') ];
     encodePrefix = [encodePrefix '-vpD=' num2str(dimensions.visualPreferenceDistance,'%.2f')];
     encodePrefix = [encodePrefix '-epD=' num2str(dimensions.eyePositionPrefrerenceDistance,'%.2f')];
     encodePrefix = [encodePrefix '-gS=' num2str(dimensions.gaussianSigma,'%.2f')];
@@ -156,4 +163,72 @@ function OneD_DG_Simple()
 
     end
 
+    function doTimeStepsRandom(nrOfRandomMovements)
+        
+        possibleEyePositions = eyePosition:saccadeAmplitude:dimensions.rightMostEyePosition;
+        
+        nrOfSubsequentEyeMovements  = 3
+        
+        for n = 1:nrOfRandomMovements,
+            
+            
+            
+        end
+        
+        
+
+        % Do all timesteps, 
+        % inner loop terminates when eyes have saccaded past right edge of visual field
+        while true,
+
+            % Do one timestep
+
+            % We start by setting the remainder to the full time step
+            % remainederOfTimeStep = how much of present time step remains
+            remainederOfTimeStep = timeStep;
+
+            while remainederOfTimeStep > 0, 
+
+                if ~state, % fixating
+                    timeToNextState = fixationDuration - stateTimer;
+                else % saccading 
+                    timeToNextState = saccadeDuration - stateTimer;
+                end
+
+                switchState = timeToNextState <= remainederOfTimeStep;
+
+                if switchState, % we must change state within remaining time
+
+                    state = ~state;                                                   % change state
+                    stateTimer = 0;                                                   % reset timer for new state
+                    consume = timeToNextState;
+
+                else % we cannot change state within remaining time
+
+                    stateTimer = stateTimer + remainederOfTimeStep;                   % move timer
+                    consume = remainederOfTimeStep;                                   
+                    % we could break here, but what the heck
+                end
+
+                remainederOfTimeStep = remainederOfTimeStep - consume;                % consume time
+
+                if xor(state, switchState),
+                    eyePosition = eyePosition + saccadeVelocity*consume;              % eyes move
+                end
+
+            end
+
+            % Output data point if we are still within visual field
+            if eyePosition < dimensions.rightMostEyePosition,
+                %disp(['Saved: eye =' num2str(eyePosition) ', ret =' num2str(t - eyePosition)]); % relationhip is t = r + e
+                fwrite(fileID, eyePosition, 'float'); % Eye position (HFP)
+                fwrite(fileID, t - eyePosition, 'float'); % Fixation offset of target
+            else
+                return;
+            end
+
+        end
+
+    end
+    
 end
