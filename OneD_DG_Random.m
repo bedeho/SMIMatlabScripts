@@ -22,12 +22,12 @@ function OneD_DG_Random(prefix)
     saccadeVelocity             = 400000000000;	% (deg/s), http://www.omlab.org/Personnel/lfd/Jrnl_Arts/033_Sacc_Vel_Chars_Intrinsic_Variability_Fatigue_1979.pdf
     samplingRate                = 50;	% (Hz)
     fixationDuration            = 0.2;  % 0.25;	% (s) - fixation period after each saccade
-    saccadeAmplitude            = 60;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
+    saccadeAmplitude            = 16;    % 30= 13 hp(deg) - angular magnitude of each saccade, after which there is a fixation periode
 
     % Derived
     ticksPrSample = fixationDuration * samplingRate;
-    nrOfSubsequentEyeMovements = 2;
-    nrOfRandomMovements = 9;
+    nrOfSubsequentEyeMovements = 4;
+    nrOfRandomMovements = 10;
     
     possibleEyePositions = dimensions.leftMostEyePosition:saccadeAmplitude:dimensions.rightMostEyePosition;
     nrOfEyePositions = length(possibleEyePositions);
@@ -39,7 +39,7 @@ function OneD_DG_Random(prefix)
         prefix = [prefix '-']
     end
     
-    encodePrefix = prefix;
+    encodePrefix = [prefix 'move=' num2str(nrOfRandomMovements) '_' num2str(nrOfSubsequentEyeMovements) '-'];
     encodePrefix = [encodePrefix 'fD=' num2str(fixationDuration,'%.2f') ];
     encodePrefix = [encodePrefix '-sA=' num2str(saccadeAmplitude,'%.2f') ];
     encodePrefix = [encodePrefix '-vpD=' num2str(dimensions.visualPreferenceDistance,'%.2f')];

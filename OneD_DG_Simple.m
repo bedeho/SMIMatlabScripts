@@ -32,7 +32,7 @@ function OneD_DG_Simple(prefix)
     if nargin < 1,
         prefix = '';
     else
-        prefix = [prefix '-']
+        prefix = [prefix '-'];
     end
     
     encodePrefix = prefix;
