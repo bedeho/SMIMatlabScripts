@@ -18,6 +18,11 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
     % Setup vars
     numRegions = length(networkDimensions);
     axisVals = zeros(numRegions, 3); % Save axis that we can lookup 'CurrentPoint' property on callback
+    markerSpecifiers = {'r+', 'kv', 'bx', 'cs', 'md', 'y^', 'g.', 'w>'}; %, '<', 'p', 'h'''
+    objectLegend = cell(nrOfEyePositionsInTesting,1);
+    for o=1:nrOfEyePositionsInTesting,
+        objectLegend{o} = ['Object ' num2str(o)];
+    end
     
     % Iterate regions to do correlation plot and setup callbacks
     fig = figure('name',filename,'NumberTitle','off');
@@ -83,17 +88,18 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
             z(z == 0) = [];
             responseCounts = hist(z,1:objectsPrEyePosition);
             
-            plot(responseCounts);
+            plot(responseCounts, [':' markerSpecifiers{e}]);
             hold all
         end
         
         axis tight
+        legend(objectLegend);
         
         hold off
        
     end
     
-    %makeFigureFullScreen(fig);
+   % makeFigureFullScreen(fig);
     
     % Callback
     function responseCallBack(varargin)
@@ -117,7 +123,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         cla
         
-        markerSpecifiers = {'r+', 'kv', 'bx', 'cs', 'md', 'y^', 'g.', 'w>'}; %, '<', 'p', 'h'''
+       
         
         m = 1.1;
         
@@ -135,6 +141,7 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         end  
 
         axis([1 objectsPrEyePosition -0.1 m]);
+        legend(objectLegend);
         
         %%}
         

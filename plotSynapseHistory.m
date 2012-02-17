@@ -38,7 +38,7 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     synapses = synapseHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
     
     fig = figure();
-    
+
     for s=1:length(synapses),
 
         % Plot
