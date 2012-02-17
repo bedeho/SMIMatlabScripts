@@ -43,7 +43,7 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
 
         % Plot
         v = synapses(s).activity(:, :, 1:maxEpoch);
-        plot(reshape(v, [1 streamSize]));
+        synapseLine = plot(reshape(v, [1 streamSize]));
         hold on;
     end
     
@@ -71,7 +71,7 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     
     streamSize = maxEpoch * historyDimensions.epochSize;
     vect = reshape(v, [1 streamSize]);
-    plot(vect,'r');
+    firingLine = plot(vect,'r');
     hold on;
 
     fclose(fileID);
@@ -80,7 +80,7 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     % TRACE
     %=====================================================================================================================
     
-    %{
+    
     traceRateFile = [folder '/trace.dat'];
     
     % Open file
@@ -97,17 +97,17 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     
     streamSize = maxEpoch * historyDimensions.epochSize;
     vect = reshape(v, [1 streamSize]);
-    plot(vect, 'g');
+    traceLine = plot(vect, 'g');
     hold on;
 
     fclose(fileID);
-    %}
+    
     
     %=====================================================================================================================
     % ACTIVATION
     %=====================================================================================================================
     
-    %{
+    
     traceRateFile = [folder '/activation.dat'];
     
     % Open file
@@ -125,11 +125,11 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     streamSize = maxEpoch * historyDimensions.epochSize;
     vect = reshape(v, [1 streamSize]);
     
-    plot(vect, 'y');
+    activationLine = plot(vect, 'y');
     hold on;
 
     fclose(fileID);
-    %}
+    
     
     %=====================================================================================================================
     % GRID
@@ -157,7 +157,7 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     
     title(['Row ' num2str(row) ' Col ' num2str(col) ' Region ' num2str(region)]);
     
-    
+    legend([synapseLine firingLine traceLine activationLine],'Synapses','Firing','Trace','Activation');
     
     axis tight;
     
