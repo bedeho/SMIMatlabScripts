@@ -74,15 +74,16 @@ function plotExperiment(experiment, stimuliName)
     fprintf(fileID, '<thead><tr>');
     fprintf(fileID, '<th>Name</th>');
     fprintf(fileID, '<th>Network</th>');
-    fprintf(fileID, '<th>Result</th>');
-    fprintf(fileID, '<th>Result 2</th>');
+    %fprintf(fileID, '<th>Result 1</th>');
+    %fprintf(fileID, '<th>Result 2</th>');
+    fprintf(fileID, '<th>Result *</th>');
     for p = 1:nrOfParams,
         fprintf(fileID, ['<th>' parameters{p,1} '</th>']);
     end
-    fprintf(fileID, '<th>#nrOfHeadCenteredCells</th>');
+    %fprintf(fileID, '<th>#nrOfHeadCenteredCells</th>');
     fprintf(fileID, '<th>orthogonalityIndex</th>');
-    fprintf(fileID, '<th>MeanObjects</th>');
-    fprintf(fileID, '<th>MeanTransforms</th>');
+    %fprintf(fileID, '<th>MeanObjects</th>');
+    %fprintf(fileID, '<th>MeanTransforms</th>');
     fprintf(fileID, '<th>Action</th>');
     fprintf(fileID, '</tr></thead>');
     
@@ -120,11 +121,14 @@ function plotExperiment(experiment, stimuliName)
                     % Network
                     fprintf(fileID, '<td> %s </td>\n', summary(s).directory);
                     
-                    % Result 1
-                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/result_1.png']);
+                    %% Result 1
+                    %%fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/result_1.png']);
                     
-                    % Result 2
-                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/orthogonality.png']);
+                    %% Result 2
+                    %%fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/orthogonality.png']);
+
+                    % Result 3
+                    fprintf(fileID, '<td><img src="%s" width="370px" height="300px"/></td>\n', [netDir '/invariance.png']);
                     
                     % Parameters
                     parameters = getParameters(simulation);
@@ -133,11 +137,13 @@ function plotExperiment(experiment, stimuliName)
                         fprintf(fileID, ['<td> ' parameters{p,2} ' </td>\n']);
                     end
                     
+                    %{
                     if summary(s).nrOfHeadCenteredCells > 0,
                         fprintf(fileID, '<td style=''background-color:green;''> %d </td>\n', summary(s).nrOfHeadCenteredCells);
                     else    
                         fprintf(fileID, '<td> %d </td>\n', summary(s).nrOfHeadCenteredCells);
                     end
+                    %}
                     
                     % Orthoganlity Index
                     if summary(s).orthogonalityIndex < 1,
@@ -146,6 +152,7 @@ function plotExperiment(experiment, stimuliName)
                         fprintf(fileID, '<td> %d </td>\n', summary(s).orthogonalityIndex);
                     end
                     
+                    %{
                     % MeanObjects
                     if summary(s).MeanObjects < 2,
                         fprintf(fileID, '<td style=''background-color:yellow;''> %d </td>\n', summary(s).MeanObjects);
@@ -153,23 +160,24 @@ function plotExperiment(experiment, stimuliName)
                         fprintf(fileID, '<td> %d </td>\n', summary(s).MeanObjects);
                     end
                     
-                    % Orthoganlity Index
+                    % MeanTransforms
                     if summary(s).MeanTransforms > 1,
                         fprintf(fileID, '<td style=''background-color:blue;''> %d </td>\n', summary(s).MeanTransforms);
                     else    
                         fprintf(fileID, '<td> %d </td>\n', summary(s).MeanTransforms);
                     end
+                    %}
                     
                     % Action
                     fprintf(fileID, '<td>\n');
-                    outputButton('Correlation', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
+                    %outputButton('Correlation', ['matlab:open(\\''' netDir '/result_1.fig\\'')']);
                     outputButton('Output Orthogonalization', ['matlab:open(\\''' netDir '/outputOrthogonality.fig\\'')']);
                     outputButton('Response', ['matlab:inspectResponse(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
                     outputButton('Weights', ['matlab:inspectWeights(\\''' netDir '/' summary(s).directory '.txt\\'',\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']);
                     outputButton('Representation', ['matlab:inspectRepresentation(\\''' netDir '/firingRate.dat\\'',' num2str(info.nrOfEyePositionsInTesting) ')']); 
                     outputButton('Firing', ['matlab:plotNetworkHistory(\\''' netDir '/firingRate.dat\\'')']); 
                     outputButton('Activation', ['matlab:plotNetworkHistory(\\''' netDir '/activation.dat\\'')']);
-                    outputButton('IActivation', ['matlab:plotNetworkHistory(\\''' netDir '/inhibitedActivation.dat\\'')']);
+                    %outputButton('IActivation', ['matlab:plotNetworkHistory(\\''' netDir '/inhibitedActivation.dat\\'')']);
                     outputButton('Trace', ['matlab:plotNetworkHistory(\\''' netDir '/trace.dat\\'')']);
                     outputButton('Stimulation', ['matlab:plotNetworkHistory(\\''' netDir '/stimulation.dat\\'')']);
                     fprintf(fileID, '</td>');

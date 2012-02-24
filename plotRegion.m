@@ -6,7 +6,7 @@
 %  Copyright 2011 OFTNAI. All rights reserved.
 %
 
-function [outputPatternsPlot, MeanObjects, MeanTransforms, orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot, corr] = plotRegion(filename, info, dotproduct, region, depth)
+function [outputPatternsPlot, MeanObjects, MeanTransforms, orthogonalityIndex, regionOrthogonalizationPlot, regionCorrelationPlot, corr, invariancePlot] = plotRegion(filename, info, dotproduct, region, depth)
 
     % Get dimensions
     [networkDimensions, historyDimensions] = getHistoryDimensions(filename);
@@ -52,5 +52,27 @@ function [outputPatternsPlot, MeanObjects, MeanTransforms, orthogonalityIndex, r
     
     % Invariance & Selectivity
     [MeanObjects, MeanTransforms] = regionTrace(filename, info.nrOfEyePositionsInTesting);
+    
+    %% Compute invariance heuristic
+    invariancePlot = figure();
+
+    responseCounts = invarianceHeuristics(filename, info.nrOfEyePositionsInTesting);
+    markerSpecifiers = {'r+', 'kv', 'bx', 'cs', 'md', 'y^', 'g.', 'w>'};
+    
+    % Plot a line for each object
+    for e=1:info.nrOfEyePositionsInTesting,
+        plot(responseCounts{e}, ['-' markerSpecifiers{e}], 'Linewidth', 3);
+        hold all
+    end
+
+    axis tight
+    
+    % Object legend
+    objectLegend = cell(info.nrOfEyePositionsInTesting,1);
+    for o=1:info.nrOfEyePositionsInTesting,
+        objectLegend{o} = ['Object ' num2str(o)];
+    end
+    
+    legend(objectLegend);
 
 end

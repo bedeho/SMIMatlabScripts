@@ -1,6 +1,6 @@
 %
 %  plotSynapseHistory.m
-%  SMI (VisBack copY)
+%  SMI (VisBack copy)
 %
 %  Created by Bedeho Mender on 16/01/12.
 %  Copyright 2012 OFTNAI. All rights reserved.
@@ -15,121 +15,61 @@
 %  Output========
 %  Plots line plot of activity for spesific neuron
 
-function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
+function plotSynapseHistory(folder, region, depth, row, col, includeSynapses, maxEpoch)
 
     % Import global variables
     declareGlobalVars();
     
-    synapseFile = [folder '/synapticWeights.dat'];
+    % Get history dimensions
+    [networkDimensions, historyDimensions] = getHistoryDimensions([folder '/firingRate.dat']);
     
-    % Open file
-    fileID = fopen(synapseFile);
-    
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets] = loadSynapseWeightHistoryHeader(fileID);
-    
-    if nargin < 6,
+    if nargin < 7,
         maxEpoch = historyDimensions.numEpochs; % pick all epochs
+        
+        if nargin < 6,
+            includeSynapses = true;
+        end
     end
     
     streamSize = maxEpoch * historyDimensions.epochSize;
     
-    % Get history array
-    synapses = synapseHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
-    
+    % Setup figure
     fig = figure();
+    
+    % Plot synapses
+    if includeSynapses,
+        
+        synapseFile = [folder '/synapticWeights.dat'];
 
-    for s=1:length(synapses),
+        % Open file
+        fileID = fopen(synapseFile);
 
-        % Plot
-        v = synapses(s).activity(:, :, 1:maxEpoch);
-        synapseLine = plot(reshape(v, [1 streamSize]));
-        hold on;
+        % Read header
+        [networkDimensions, historyDimensions, neuronOffsets] = loadSynapseWeightHistoryHeader(fileID);
+
+        % Get history array
+        synapses = synapseHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
+
+        % Plot history of each synapse
+        for s=1:length(synapses),
+
+            v = synapses(s).activity(:, :, 1:maxEpoch);
+            vect = reshape(v, [1 streamSize]);
+            synapseLine = plot(vect);
+            hold on;
+        end
+
+        fclose(fileID);
+        
     end
     
-    fclose(fileID);
+    % Plot neuron dynamics
+    [traceLine, m1] = plotFile('trace.dat', 'g');
+    [activationLine, m2] = plotFile('activation.dat', 'y');
+    [firingLine, m3] = plotFile('firingRate.dat', 'r');
+    [stimulationLine, m4] = plotFile('stimulation.dat', 'm');
     
-    makeFigureFullScreen(fig);
-    
-    %=====================================================================================================================
-    % FIRING
-    %=====================================================================================================================
-    
-    firingRateFile = [folder '/firingRate.dat'];
-    
-    % Open file
-    fileID = fopen(firingRateFile);
-    
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets] = loadHistoryHeader(firingRateFile);
-    
-    % Get history array
-    activity = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
-    
-    % Plot
-    v = activity(:, :, 1:maxEpoch);
-    
-    streamSize = maxEpoch * historyDimensions.epochSize;
-    vect = reshape(v, [1 streamSize]);
-    firingLine = plot(vect,'r');
-    hold on;
-
-    fclose(fileID);
-    
-    %=====================================================================================================================
-    % TRACE
-    %=====================================================================================================================
-    
-    
-    traceRateFile = [folder '/trace.dat'];
-    
-    % Open file
-    fileID = fopen(traceRateFile);
-    
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets] = loadHistoryHeader(traceRateFile);
-    
-    % Get history array
-    activity = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
-    
-    % Plot
-    v = activity(:, :, 1:maxEpoch);
-    
-    streamSize = maxEpoch * historyDimensions.epochSize;
-    vect = reshape(v, [1 streamSize]);
-    traceLine = plot(vect, 'g');
-    hold on;
-
-    fclose(fileID);
-    
-    
-    %=====================================================================================================================
-    % ACTIVATION
-    %=====================================================================================================================
-    
-    
-    traceRateFile = [folder '/activation.dat'];
-    
-    % Open file
-    fileID = fopen(traceRateFile);
-    
-    % Read header
-    [networkDimensions, historyDimensions, neuronOffsets] = loadHistoryHeader(traceRateFile);
-    
-    % Get history array
-    activity = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
-    
-    % Plot
-    v = activity(:, :, 1:maxEpoch);
-    
-    streamSize = maxEpoch * historyDimensions.epochSize;
-    vect = reshape(v, [1 streamSize]);
-    
-    activationLine = plot(vect, 'y');
-    hold on;
-
-    fclose(fileID);
-    
+    mFinal = max([0.51 m1 m2 m3 m4]);
     
     %=====================================================================================================================
     % GRID
@@ -143,11 +83,15 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
     %    gridxy(x, 'Color', 'c', 'Linestyle', ':');
     %end
     
+    hold on
+    
     % Draw vertical divider for each object
     if historyDimensions.numObjects > 1,
         x = historyDimensions.objectSize : historyDimensions.objectSize : streamSize;
         gridxy(x, 'Color', 'b', 'Linestyle', '--');
     end
+    
+    hold on
     
     % Draw vertical divider for each epoch
     if maxEpoch > 1,
@@ -155,9 +99,37 @@ function plotSynapseHistory(folder, region, depth, row, col, maxEpoch)
         gridxy(x, 'Color', 'k', 'Linestyle', '-');
     end
     
+    hold on
+    
     title(['Row ' num2str(row) ' Col ' num2str(col) ' Region ' num2str(region)]);
     
-    legend([synapseLine firingLine traceLine activationLine],'Synapses','Firing','Trace','Activation');
+    legend([synapseLine firingLine traceLine activationLine stimulationLine],'Synapses','Firing','Trace','Activation','Stimulation');
     
-    axis tight;
+    axis([0 streamSize -0.02 mFinal]);
     
+    function [lineHandle, maxValue] = plotFile(filename, color)
+        
+        firingRateFile = [folder '/' filename];
+
+        % Open file
+        fileID = fopen(firingRateFile);
+
+        % Read header
+        [networkDimensions, historyDimensions, neuronOffsets] = loadHistoryHeader(firingRateFile);
+
+        % Get history array
+        activity = neuronHistory(fileID, networkDimensions, historyDimensions, neuronOffsets, region, depth, row, col, maxEpoch);
+
+        % Plot
+        v = activity(:, :, 1:maxEpoch);
+
+        streamSize = maxEpoch * historyDimensions.epochSize;
+        vect = reshape(v, [1 streamSize]);
+        lineHandle = plot(vect, color);
+        hold on;
+        
+        maxValue = max(vect);
+
+        fclose(fileID);
+    end
+end
