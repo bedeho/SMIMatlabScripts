@@ -67,17 +67,13 @@ function plotSynapseHistory(folder, region, depth, row, col, includeSynapses, ma
     [traceLine, m1] = plotFile('trace.dat', 'g');
     [activationLine, m2] = plotFile('activation.dat', 'y');
     [firingLine, m3] = plotFile('firingRate.dat', 'r');
-    [stimulationLine, m4] = plotFile('stimulation.dat', 'm');
-    
-    mFinal = max([0.51 m1 m2 m3 m4]);
-    
-    %=====================================================================================================================
+    [stimulationLine, m4] = plotFile('stimulation.dat', 'k');
+    mFinal = max([0.51 m1 m2 m3 m4]); % Used for axis
+
     % GRID
-    %=====================================================================================================================
-    
-    %legend('Synapses','Firing','Trace','Activation');
-    
-    % % Draw vertical divider for each transform
+
+    % No longer valid, transforms dont exist!
+    % Draw vertical divider for each transform
     %if historyDimensions.numOutputsPrTransform > 1,
     %    x = historyDimensions.numOutputsPrTransform : historyDimensions.numOutputsPrTransform : streamSize;
     %    gridxy(x, 'Color', 'c', 'Linestyle', ':');
@@ -103,7 +99,11 @@ function plotSynapseHistory(folder, region, depth, row, col, includeSynapses, ma
     
     title(['Row ' num2str(row) ' Col ' num2str(col) ' Region ' num2str(region)]);
     
-    legend([synapseLine firingLine traceLine activationLine stimulationLine],'Synapses','Firing','Trace','Activation','Stimulation');
+    if includeSynapses,
+        legend([synapseLine firingLine traceLine activationLine stimulationLine],'Synapses','Firing','Trace','Activation','Stimulation');
+    else
+        legend([firingLine traceLine activationLine stimulationLine],'Firing','Trace','Activation','Stimulation');
+    end
     
     axis([0 streamSize -0.02 mFinal]);
     
