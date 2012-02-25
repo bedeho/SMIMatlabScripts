@@ -42,8 +42,11 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         %% Delta plot
         axisVals(r-1,1) = subplot(numRegions, PLOT_COLS, PLOT_COLS*(r-2) + 1); % Save axis
         deltaMatrix = regionDelta(network_1, network_2, r);
-        imagesc(deltaMatrix);
+        im = imagesc(deltaMatrix);
+        daspect([size(deltaMatrix) 1]);
+        title('This vs. BlankNetwork weight matrix correlation per cell');
         colorbar;
+        set(im, 'ButtonDownFcn', {@responseCallBack, r,1}); % Setup callback
         
         %% Activity indicator
         axisVals(r-1,2) = subplot(numRegions, PLOT_COLS, PLOT_COLS*(r-2) + 2); % Save axis
@@ -63,20 +66,16 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         im = imagesc(v2);         % only do first region
         daspect([size(v2) 1]);
         title('Number of testing locations responded to');
+        colorbar;
         %%}
     
-        colorbar;
-        
-        % Histogram
+        %% ResponseCount historgram
         axisVals(r-1,3) = subplot(numRegions, PLOT_COLS, PLOT_COLS*(r-2) + 3); % Simon model
         noZeros = v2(:);
         noZeros(noZeros == 0) = [];
-        
         hist(noZeros,1:(max(max(v2))));
         title(['Mean: ' num2str(mean2(v2))]);
-        
-        % Setup callback
-        set(im, 'ButtonDownFcn', {@responseCallBack, r});
+        set(im, 'ButtonDownFcn', {@responseCallBack, r,2}); % Setup callback
         
         %% Invariance heuristic
         axisVals(r-1,PLOT_COLS) = subplot(numRegions, PLOT_COLS, PLOT_COLS*(r-2) + PLOT_COLS);
@@ -104,8 +103,9 @@ function inspectResponse(filename, nrOfEyePositionsInTesting)
         
         % Extract region,row,col
         region = varargin{3};
+        plotNum = varargin{4};
 
-        pos = get(axisVals(region-1,2), 'CurrentPoint');
+        pos = get(axisVals(region-1,plotNum), 'CurrentPoint');
         [row, col] = imagescClick(pos(1, 2), pos(1, 1), networkDimensions(region).y_dimension, networkDimensions(region).x_dimension);
 
         % single left  click => 'SelectionType' = 'normal'
